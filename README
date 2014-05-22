@@ -1,0 +1,32 @@
+libgdav
+=======
+
+libgdav is a GObject-based library for performing WebDAV operations using
+libsoup.  It can be thought of as an extension of libsoup, just as WebDAV
+is an extension of HTTP.
+
+libgdav methods can execute synchronously or asynchronously and follow the
+conventions established by GIO.  The methods hide assembling XML requests
+and parsing XML responses behind a public API of GObject types.
+
+libgdav was inspired by and is loosely based on Philip Withnall's design
+for libgdata.
+
+The package includes an interactive command-line tool 'gdav' -- which is
+a blatant rip off of 'cadaver' (http://www.webdav.org/cadaver/) -- whose
+purpose is primarily to exercise libgdav for debugging and testing.
+
+libgdav is licensed under the LGPL; see COPYING for more details.
+
+Dependencies
+============
+
+  • glib-2.0 / gio-2.0 ≥ 2.36
+  • libsoup-2.4 ≥ 2.42
+  • libxml-2.0
+  • libedit (for the command-line tool)
+
+Contact
+=======
+
+Matthew Barnes <mbarnes@redhat.com>

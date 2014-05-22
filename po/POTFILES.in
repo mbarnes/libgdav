@@ -1,0 +1,7 @@
+libgdav/gdav-methods.c
+libgdav/gdav-parsable.c
+libgdav/gdav-resourcetype-property.c
+libgdav/gdav-response.c
+tools/main.c
+tools/commands.c
+tools/utils.c
