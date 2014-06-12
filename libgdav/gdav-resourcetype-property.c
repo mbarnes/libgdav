@@ -33,10 +33,8 @@ G_DEFINE_TYPE (
 static struct {
 	xmlChar *name;
 	xmlChar *ns_href;
-	GDavResourceType type;
-} property_map[] = {
-
-	/* Prioritize these; highest first. */
+	GDavResourceType flag;
+} xml_map[] = {
 
 	{ BAD_CAST "collection",
 	  BAD_CAST GDAV_XMLNS_DAV,
@@ -63,12 +61,11 @@ gdav_resourcetype_property_serialize (GDavParsable *parsable,
 	ns = g_hash_table_lookup (namespaces, GDAV_XMLNS_DAV);
 	node = xmlNewTextChild (parent, ns, BAD_CAST "resourcetype", NULL);
 
-	for (ii = 0; ii < G_N_ELEMENTS (property_map); ii++) {
-		if (resource_type & property_map[ii].type) {
+	for (ii = 0; ii < G_N_ELEMENTS (xml_map); ii++) {
+		if (resource_type & xml_map[ii].flag) {
 			ns = g_hash_table_lookup (
-				namespaces, property_map[ii].ns_href);
-			xmlNewTextChild (
-				node, ns, property_map[ii].name, NULL);
+				namespaces, xml_map[ii].ns_href);
+			xmlNewTextChild (node, ns, xml_map[ii].name, NULL);
 		}
 	}
 
@@ -94,13 +91,13 @@ gdav_resourcetype_property_deserialize (GDavParsable *parsable,
 
 	/* xmlStrcmp() handles NULL arguments gracefully. */
 
-	for (ii = 0; ii < G_N_ELEMENTS (property_map); ii++) {
-		if (xmlStrcmp (node->name, property_map[ii].name) != 0)
+	for (ii = 0; ii < G_N_ELEMENTS (xml_map); ii++) {
+		if (xmlStrcmp (node->name, xml_map[ii].name) != 0)
 			continue;
-		if (xmlStrcmp (node->ns->href, property_map[ii].ns_href) != 0)
+		if (xmlStrcmp (node->ns->href, xml_map[ii].ns_href) != 0)
 			continue;
 
-		resource_type |= property_map[ii].type;
+		resource_type |= xml_map[ii].flag;
 		g_value_set_flags (&value, resource_type);
 		gdav_property_set_value (GDAV_PROPERTY (parsable), &value);
 

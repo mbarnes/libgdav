@@ -101,6 +101,7 @@ typedef enum {
 	GDAV_PROPFIND_PROPNAME
 } GDavPropFindType;
 
+/* Remember to update the xml_map in gdav-resourcetype-property.c */
 typedef enum { /*< flags >*/
 	GDAV_RESOURCE_TYPE_COLLECTION = 1 << 0
 } GDavResourceType;
