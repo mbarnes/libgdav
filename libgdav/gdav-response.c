@@ -314,6 +314,22 @@ gdav_response_has_href (GDavResponse *response,
 	return FALSE;
 }
 
+GList *
+gdav_response_list_hrefs (GDavResponse *response)
+{
+	GQueue queue = G_QUEUE_INIT;
+	guint ii;
+
+	g_return_val_if_fail (GDAV_IS_RESPONSE (response), NULL);
+
+	for (ii = 0; ii < response->priv->hrefs->len; ii++) {
+		SoupURI *href = response->priv->hrefs->pdata[ii];
+		g_queue_push_tail (&queue, soup_uri_copy (href));
+	}
+
+	return g_queue_peek_head_link (&queue);
+}
+
 guint
 gdav_response_get_status (GDavResponse *response,
                           gchar **reason_phrase)

@@ -61,6 +61,7 @@ struct _GDavResponseClass {
 GType		gdav_response_get_type		(void) G_GNUC_CONST;
 gboolean	gdav_response_has_href		(GDavResponse *response,
 						 SoupURI *uri);
+GList *		gdav_response_list_hrefs	(GDavResponse *response);
 guint		gdav_response_get_status	(GDavResponse *response,
 						 gchar **reason_phrase);
 GDavPropStat *	gdav_response_get_propstat	(GDavResponse *response,
