@@ -103,7 +103,12 @@ typedef enum {
 
 /* Remember to update the xml_map in gdav-resourcetype-property.c */
 typedef enum { /*< flags >*/
-	GDAV_RESOURCE_TYPE_COLLECTION = 1 << 0
+	GDAV_RESOURCE_TYPE_COLLECTION = 1 << 0,
+	GDAV_RESOURCE_TYPE_CALENDAR = 1 << 1,
+	GDAV_RESOURCE_TYPE_SCHEDULE_INBOX = 1 << 2,
+	GDAV_RESOURCE_TYPE_SCHEDULE_OUTBOX = 1 << 3,
+	GDAV_RESOURCE_TYPE_ADDRESSBOOK = 1 << 4,
+	GDAV_RESOURCE_TYPE_MOUNTPOINT = 1 << 5
 } GDavResourceType;
 
 #endif /* __GDAV_ENUMS_H__ */

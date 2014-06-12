@@ -36,9 +36,35 @@ static struct {
 	GDavResourceType flag;
 } xml_map[] = {
 
+	/* RFC 4918 */
 	{ BAD_CAST "collection",
 	  BAD_CAST GDAV_XMLNS_DAV,
-	  GDAV_RESOURCE_TYPE_COLLECTION }
+	  GDAV_RESOURCE_TYPE_COLLECTION },
+
+	/* RFC 4791 */
+	{ BAD_CAST "calendar",
+	  BAD_CAST GDAV_XMLNS_CALDAV,
+	  GDAV_RESOURCE_TYPE_CALENDAR },
+
+	/* RFC 6638 */
+	{ BAD_CAST "schedule-inbox",
+	  BAD_CAST GDAV_XMLNS_CALDAV,
+	  GDAV_RESOURCE_TYPE_SCHEDULE_INBOX },
+
+	/* RFC 6638 */
+	{ BAD_CAST "schedule-outbox",
+	  BAD_CAST GDAV_XMLNS_CALDAV,
+	  GDAV_RESOURCE_TYPE_SCHEDULE_OUTBOX },
+
+	/* RFC 6352 */
+	{ BAD_CAST "addressbook",
+	  BAD_CAST GDAV_XMLNS_CARDDAV,
+	  GDAV_RESOURCE_TYPE_ADDRESSBOOK },
+
+	/* ??? */
+	{ BAD_CAST "mountpoint",
+	  BAD_CAST GDAV_XMLNS_YAHOO,
+	  GDAV_RESOURCE_TYPE_MOUNTPOINT }
 };
 
 static gboolean
