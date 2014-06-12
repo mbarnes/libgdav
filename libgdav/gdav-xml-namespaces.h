@@ -25,6 +25,8 @@
 
 #define GDAV_XMLNS_DAV			"DAV:"
 #define GDAV_XMLNS_CALDAV		"urn:ietf:params:xml:ns:caldav"
+#define GDAV_XMLNS_CARDDAV		"urn:ietf:params:xml:ns:carddav"
+#define GDAV_XMLNS_YAHOO		"http://yahoo.com/ns/"
 
 G_BEGIN_DECLS
 
