@@ -276,9 +276,6 @@ gdav_parsable_new_from_xml_node (GType parsable_type,
 	for (child = node->children; child != NULL; child = child->next) {
 		gboolean success;
 
-		if (child->type != XML_ELEMENT_NODE)
-			continue;
-
 		success = gdav_parsable_deserialize (
 			parsable, base_uri, doc, child, error);
 
