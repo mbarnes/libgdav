@@ -71,6 +71,8 @@ libgdav_headers = \
 	gdav-property.h \
 	gdav-property-set.h \
 	gdav-property-update.h \
+	gdav-redirect-lifetime-property.h \
+	gdav-reftarget-property.h \
 	gdav-requests.h \
 	gdav-resourcetype-property.h \
 	gdav-response.h \
@@ -117,6 +119,8 @@ libgdav_la_SOURCES = \
 	gdav-property.c \
 	gdav-property-set.c \
 	gdav-property-update.c \
+	gdav-redirect-lifetime-property.c \
+	gdav-reftarget-property.c \
 	gdav-requests.c \
 	gdav-resourcetype-property.c \
 	gdav-response.c \

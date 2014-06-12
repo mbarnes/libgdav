@@ -148,9 +148,41 @@ SoupRequestHTTP *
 						 const gchar *lock_token,
 						 GError **error);
 
+/*** RFC 4437 - Redirect Reference Resources ***/
+
+SoupRequestHTTP *
+		gdav_request_mkredirectref	(SoupSession *session,
+						 const gchar *uri_string,
+						 SoupURI *target,
+						 GDavRedirectLifetime lifetime,
+						 GError **error);
+SoupRequestHTTP *
+		gdav_request_mkredirectref_uri	(SoupSession *session,
+						 SoupURI *uri,
+						 SoupURI *target,
+						 GDavRedirectLifetime lifetime,
+						 GError **error);
+
+SoupRequestHTTP *
+		gdav_request_updateredirectref	(SoupSession *session,
+						 const gchar *uri_string,
+						 SoupURI *target,
+						 GDavRedirectLifetime lifetime,
+						 GError **error);
+SoupRequestHTTP *
+		gdav_request_updateredirectref_uri
+						(SoupSession *session,
+						 SoupURI *uri,
+						 SoupURI *target,
+						 GDavRedirectLifetime lifetime,
+						 GError **error);
+
 void		gdav_request_add_lock_token	(SoupRequestHTTP *request,
 						 const gchar *resource_tag,
 						 const gchar *lock_token);
+void		gdav_request_apply_to_redirect_ref
+						(SoupRequestHTTP *request,
+						 gboolean true_or_false);
 
 G_END_DECLS
 

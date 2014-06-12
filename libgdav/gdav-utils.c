@@ -145,6 +145,9 @@ gdav_options_from_headers (SoupMessageHeaders *headers)
 		if (soup_header_contains (hdr, "access-control"))
 			options |= GDAV_OPTIONS_ACCESS_CONTROL;
 
+		if (soup_header_contains (hdr, "redirectrefs"))
+			options |= GDAV_OPTIONS_REDIRECT_REFS;
+
 		if (soup_header_contains (hdr, "version-control"))
 			options |= GDAV_OPTIONS_VERSION_CONTROL;
 

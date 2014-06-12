@@ -94,6 +94,8 @@ gdav_parsable_class_init (GDavParsableClass *class)
 	g_type_ensure (GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY);
 	g_type_ensure (GDAV_TYPE_OWNER_PROPERTY);
 	g_type_ensure (GDAV_TYPE_PRINCIPAL_URL_PROPERTY);
+	g_type_ensure (GDAV_TYPE_REDIRECT_LIFETIME_PROPERTY);
+	g_type_ensure (GDAV_TYPE_REFTARGET_PROPERTY);
 	g_type_ensure (GDAV_TYPE_RESOURCETYPE_PROPERTY);
 	g_type_ensure (GDAV_TYPE_SCHEDULE_INBOX_URL_PROPERTY);
 	g_type_ensure (GDAV_TYPE_SCHEDULE_OUTBOX_URL_PROPERTY);

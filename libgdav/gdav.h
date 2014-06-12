@@ -57,6 +57,8 @@
 #include <libgdav/gdav-lockdiscovery-property.h>
 #include <libgdav/gdav-owner-property.h>
 #include <libgdav/gdav-principal-url-property.h>
+#include <libgdav/gdav-redirect-lifetime-property.h>
+#include <libgdav/gdav-reftarget-property.h>
 #include <libgdav/gdav-resourcetype-property.h>
 #include <libgdav/gdav-supportedlock-property.h>
 

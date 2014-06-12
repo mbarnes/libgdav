@@ -27,11 +27,17 @@
 #define XC_LOCKINFO		(BAD_CAST "lockinfo")
 #define XC_LOCKSCOPE		(BAD_CAST "lockscope")
 #define XC_LOCKTYPE		(BAD_CAST "locktype")
+#define XC_MKREDIRECTREF	(BAD_CAST "mkredirectref")
 #define XC_OWNER		(BAD_CAST "owner")
+#define XC_PERMANENT		(BAD_CAST "permanent")
 #define XC_PROPERTYUPDATE	(BAD_CAST "propertyupdate")
 #define XC_PROPFIND		(BAD_CAST "propfind")
 #define XC_PROPNAME		(BAD_CAST "propname")
+#define XC_REDIRECT_LIFETIME	(BAD_CAST "redirect-lifetime")
+#define XC_REFTARGET		(BAD_CAST "reftarget")
 #define XC_SHARED		(BAD_CAST "shared")
+#define XC_TEMPORARY		(BAD_CAST "temporary")
+#define XC_UPDATEREDIRECTREF	(BAD_CAST "updateredirectref")
 #define XC_WRITE		(BAD_CAST "write")
 
 static xmlNs *
@@ -223,6 +229,47 @@ gdav_request_headers_add_timeout (SoupMessage *message,
 			"Timeout", seconds);
 		g_free (seconds);
 	}
+}
+
+static void
+gdav_request_write_reftarget (SoupURI *target,
+                              xmlNode *parent,
+                              xmlNs *nsdav)
+{
+	if (target != NULL) {
+		xmlNode *node;
+		gchar *uri_string;
+
+		node = xmlNewTextChild (parent, nsdav, XC_REFTARGET, NULL);
+
+		uri_string = soup_uri_to_string (target, FALSE);
+		xmlNewTextChild (node, nsdav, XC_HREF, BAD_CAST uri_string);
+		g_free (uri_string);
+	}
+}
+
+static void
+gdav_request_write_redirect_lifetime (GDavRedirectLifetime lifetime,
+                                      xmlNode *parent,
+                                      xmlNs *nsdav)
+{
+	xmlNode *node;
+	xmlChar *name = NULL;
+
+	switch (lifetime) {
+		case GDAV_REDIRECT_LIFETIME_PERMANENT:
+			name = XC_PERMANENT;
+			break;
+		case GDAV_REDIRECT_LIFETIME_TEMPORARY:
+			name = XC_TEMPORARY;
+			break;
+		default:
+			/* leave it unspecified */
+			return;
+	}
+
+	node = xmlNewTextChild (parent, nsdav, XC_REDIRECT_LIFETIME, NULL);
+	xmlNewTextChild (node, nsdav, name, NULL);
 }
 
 static void
@@ -950,6 +997,158 @@ gdav_request_unlock_uri (SoupSession *session,
 	return request;
 }
 
+static void
+gdav_init_mkredirectref_request (SoupRequestHTTP *request,
+                                 SoupURI *target,
+                                 GDavRedirectLifetime lifetime)
+{
+	SoupMessage *message;
+	xmlDoc *doc;
+	xmlNode *root;
+	xmlNs *nsdav;
+
+	gdav_init_basic_request (request);
+
+	message = soup_request_http_get_message (request);
+
+	doc = xmlNewDoc (BAD_CAST "1.0");
+	root = xmlNewDocNode (doc, NULL, XC_MKREDIRECTREF, NULL);
+	xmlDocSetRootElement (doc, root);
+
+	nsdav = gdav_nsdav_new (root);
+	xmlSetNs (root, nsdav);
+
+	gdav_request_write_reftarget (target, root, nsdav);
+	gdav_request_write_redirect_lifetime (lifetime, root, nsdav);
+
+	gdav_request_write_body (message, doc, root);
+
+	xmlFreeDoc (doc);
+
+	g_object_unref (message);
+}
+
+SoupRequestHTTP *
+gdav_request_mkredirectref (SoupSession *session,
+                            const gchar *uri_string,
+                            SoupURI *target,
+                            GDavRedirectLifetime lifetime,
+                            GError **error)
+{
+	SoupRequestHTTP *request;
+
+	g_return_val_if_fail (SOUP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (uri_string != NULL, NULL);
+	g_return_val_if_fail (target != NULL, NULL);
+
+	request = soup_session_request_http (
+		session, "MKREDIRECTREF", uri_string, error);
+
+	if (request != NULL)
+		gdav_init_mkredirectref_request (request, target, lifetime);
+
+	return request;
+}
+
+SoupRequestHTTP *
+gdav_request_mkredirectref_uri (SoupSession *session,
+                                SoupURI *uri,
+                                SoupURI *target,
+                                GDavRedirectLifetime lifetime,
+                                GError **error)
+{
+	SoupRequestHTTP *request;
+
+	g_return_val_if_fail (SOUP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (uri != NULL, NULL);
+	g_return_val_if_fail (target != NULL, NULL);
+
+	request = soup_session_request_http_uri (
+		session, "MKREDIRECTREF", uri, error);
+
+	if (request != NULL)
+		gdav_init_mkredirectref_request (request, target, lifetime);
+
+	return request;
+}
+
+static void
+gdav_init_updateredirectref_request (SoupRequestHTTP *request,
+                                     SoupURI *target,
+                                     GDavRedirectLifetime lifetime)
+{
+	SoupMessage *message;
+	xmlDoc *doc;
+	xmlNode *root;
+	xmlNs *nsdav;
+
+	gdav_init_basic_request (request);
+
+	gdav_request_apply_to_redirect_ref (request, TRUE);
+
+	message = soup_request_http_get_message (request);
+
+	doc = xmlNewDoc (BAD_CAST "1.0");
+	root = xmlNewDocNode (doc, NULL, XC_UPDATEREDIRECTREF, NULL);
+	xmlDocSetRootElement (doc, root);
+
+	nsdav = gdav_nsdav_new (root);
+	xmlSetNs (root, nsdav);
+
+	gdav_request_write_reftarget (target, root, nsdav);
+	gdav_request_write_redirect_lifetime (lifetime, root, nsdav);
+
+	gdav_request_write_body (message, doc, root);
+
+	xmlFreeDoc (doc);
+
+	g_object_unref (message);
+}
+
+SoupRequestHTTP *
+gdav_request_updateredirectref (SoupSession *session,
+                                const gchar *uri_string,
+                                SoupURI *target,
+                                GDavRedirectLifetime lifetime,
+                                GError **error)
+{
+	SoupRequestHTTP *request;
+
+	g_return_val_if_fail (SOUP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (uri_string != NULL, NULL);
+	/* target can be NULL */
+
+	request = soup_session_request_http (
+		session, "UPDATEREDIRECTREF", uri_string, error);
+
+	if (request != NULL)
+		gdav_init_updateredirectref_request (request, target, lifetime);
+
+	return request;
+}
+
+SoupRequestHTTP *
+gdav_request_updateredirectref_uri (SoupSession *session,
+                                    SoupURI *uri,
+                                    SoupURI *target,
+                                    GDavRedirectLifetime lifetime,
+                                    GError **error)
+{
+	SoupRequestHTTP *request;
+
+	g_return_val_if_fail (SOUP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (uri != NULL, NULL);
+	/* target can be NULL */
+
+	request = soup_session_request_http_uri (
+		session, "UPDATEREDIRECTREF", uri, error);
+
+	if (request != NULL)
+		gdav_init_updateredirectref_request (request, target, lifetime);
+
+	return request;
+}
+
 void
 gdav_request_add_lock_token (SoupRequestHTTP *request,
                              const gchar *resource_tag,
@@ -994,3 +1193,19 @@ gdav_request_add_lock_token (SoupRequestHTTP *request,
 	g_object_unref (message);
 }
 
+void
+gdav_request_apply_to_redirect_ref (SoupRequestHTTP *request,
+                                    gboolean true_or_false)
+{
+	SoupMessage *message;
+	SoupMessageHeaders *headers;
+
+	g_return_if_fail (SOUP_IS_REQUEST_HTTP (request));
+
+	message = soup_request_http_get_message (request);
+	headers = message->request_headers;
+
+	soup_message_headers_replace (
+		headers, "Apply-To-Redirect-Ref",
+		true_or_false ? "T" : "F");
+}
