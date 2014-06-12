@@ -20,6 +20,7 @@
 #ifndef __GDAV_UTILS_H__
 #define __GDAV_UTILS_H__
 
+#include <libxml/tree.h>
 #include <libsoup/soup.h>
 #include <libgdav/gdav-enums.h>
 
@@ -37,6 +38,12 @@ void		gdav_async_closure_callback	(GObject *object,
 
 GDavAllow	gdav_allow_from_headers		(SoupMessageHeaders *headers);
 GDavOptions	gdav_options_from_headers	(SoupMessageHeaders *headers);
+
+gboolean	gdav_error_missing_content	(xmlNode *element,
+						 GError **error);
+gboolean	gdav_error_unknown_content	(xmlNode *element,
+						 const gchar *actual_content,
+						 GError **error);
 
 G_END_DECLS
 

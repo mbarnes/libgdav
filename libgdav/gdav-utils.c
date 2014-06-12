@@ -21,6 +21,10 @@
 
 #include "gdav-utils.h"
 
+#include <glib/gi18n-lib.h>
+
+#include "gdav-parsable.h"
+
 struct _GDavAsyncClosure {
 	GMainLoop *loop;
 	GMainContext *context;
@@ -193,5 +197,71 @@ gdav_options_from_headers (SoupMessageHeaders *headers)
 	}
 
 	return options;
+}
+
+static gchar *
+gdav_print_element (xmlNode *element)
+{
+	GString *string;
+
+	/* XXX Probably oversimplified, but good enough for now. */
+
+	string = g_string_sized_new (64);
+
+	g_string_append_c (string, '<');
+
+	if (element->ns != NULL && element->ns->prefix != NULL) {
+		g_string_append (string, (gchar *) element->ns->prefix);
+		g_string_append_c (string, ':');
+	}
+
+	g_string_append (string, (gchar *) element->name);
+	g_string_append_c (string, '>');
+
+	return g_string_free (string, FALSE);
+}
+
+gboolean
+gdav_error_missing_content (xmlNode *element,
+                            GError **error)
+{
+	gchar *element_string;
+
+	g_return_val_if_fail (element != NULL, FALSE);
+
+	element_string = gdav_print_element (element);
+
+	g_set_error (
+		error, GDAV_PARSABLE_ERROR,
+		GDAV_PARSABLE_ERROR_CONTENT_VIOLATION,
+		_("A %s element was missing required content"),
+		element_string);
+
+	g_free (element_string);
+
+	return FALSE;
+}
+
+gboolean
+gdav_error_unknown_content (xmlNode *element,
+                            const gchar *actual_content,
+                            GError **error)
+{
+	gchar *element_string;
+
+	g_return_val_if_fail (element != NULL, FALSE);
+	g_return_val_if_fail (actual_content != NULL, FALSE);
+
+	element_string = gdav_print_element (element);
+
+	g_set_error (
+		error, GDAV_PARSABLE_ERROR,
+		GDAV_PARSABLE_ERROR_CONTENT_VIOLATION,
+		_("The content of a %s element (\"%s\") was unknown"),
+		element_string, actual_content);
+
+	g_free (element_string);
+
+	return FALSE;
 }
 
