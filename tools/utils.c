@@ -68,17 +68,18 @@ retry:
 	}
 
 	if (local_error == NULL) {
-		state->base_uri = soup_uri_copy (uri);
+		state->base_uri = uri;  /* takes ownership */
 		state->connected = TRUE;
 
+		/* This may alter the URI's path. */
 		if (!set_path (state, uri))
 			close_connection (state);
 	} else {
 		print_error (local_error);
 		g_error_free (local_error);
+		soup_uri_free (uri);
 	}
 
-	soup_uri_free (uri);
 	g_clear_object (&message);
 }
 
@@ -91,6 +92,11 @@ close_connection (GlobalState *state)
 			state->base_uri->host);
 		soup_uri_free (state->base_uri);
 		state->base_uri = NULL;
+	}
+
+	if (state->last_uri != NULL) {
+		soup_uri_free (state->last_uri);
+		state->last_uri = NULL;
 	}
 
 	soup_session_abort (state->session);
@@ -114,6 +120,7 @@ set_path (GlobalState *state,
 	g_return_val_if_fail (state != NULL, FALSE);
 	g_return_val_if_fail (uri != NULL, FALSE);
 
+	/* This may alter the URI's path. */
 	resource_type = get_resource_type (state->session, uri, &local_error);
 
 	if (local_error != NULL) {
@@ -222,6 +229,7 @@ get_resource_type (SoupSession *session,
 	GDavResponse *response;
 	GDavResourceType resource_type = 0;
 	GValue value = G_VALUE_INIT;
+	GList *hrefs;
 	guint status;
 
 	g_return_val_if_fail (SOUP_IS_SESSION (session), 0);
@@ -242,6 +250,14 @@ get_resource_type (SoupSession *session,
 	response = gdav_multi_status_get_response (multi_status, 0);
 	g_return_val_if_fail (response != NULL, 0);
 
+	/* Canonicalize the URI path according to the response. */
+	hrefs = gdav_response_list_hrefs (response);
+	if (hrefs != NULL) {
+		const gchar *path;
+		path = soup_uri_get_path (hrefs->data);
+		soup_uri_set_path (uri, path);
+	}
+
 	status = gdav_response_find_property (
 		response, GDAV_TYPE_RESOURCETYPE_PROPERTY, &value, NULL);
 
@@ -255,3 +271,166 @@ get_resource_type (SoupSession *session,
 	return resource_type;
 }
 
+static gint
+compare_resources (gconstpointer a,
+                   gconstpointer b,
+                   gpointer unused)
+{
+	const Resource *resource_a = a;
+	const Resource *resource_b = b;
+
+	/* Sort errors first, then collections, then alphabetically. */
+
+	if (!SOUP_STATUS_IS_SUCCESSFUL (resource_a->status))
+		return -1;
+
+	if (!SOUP_STATUS_IS_SUCCESSFUL (resource_b->status))
+		return 1;
+
+	if (resource_a->type & GDAV_RESOURCE_TYPE_COLLECTION) {
+		if (resource_b->type & GDAV_RESOURCE_TYPE_COLLECTION) {
+			return g_strcmp0 (
+				resource_a->href->path,
+				resource_b->href->path);
+		} else {
+			return -1;
+		}
+	}
+
+	if (resource_b->type & GDAV_RESOURCE_TYPE_COLLECTION) {
+		return 1;
+	} else {
+		return g_strcmp0 (
+			resource_a->href->path,
+			resource_b->href->path);
+	}
+}
+
+static void
+process_response (GDavResponse *response,
+                  GQueue *out_resources)
+{
+	GList *list, *link;
+
+	list = gdav_response_list_hrefs (response);
+
+	for (link = list; link != NULL; link = g_list_next (link)) {
+		Resource *resource;
+		GType property_type;
+		GValue value = G_VALUE_INIT;
+		gchar *reason_phrase = NULL;
+
+		resource = g_slice_new0 (Resource);
+		resource->href = (SoupURI *) link->data;
+		link->data = NULL;
+
+		g_queue_push_tail (out_resources, resource);
+
+		/* For the purpose of listing resources, if any
+		 * error is encountered then the whole resource
+		 * indicates failure. */
+
+		property_type = GDAV_TYPE_RESOURCETYPE_PROPERTY;
+		resource->status = gdav_response_find_property (
+			response, property_type, &value, &reason_phrase);
+		if (SOUP_STATUS_IS_SUCCESSFUL (resource->status)) {
+			resource->type = g_value_get_flags (&value);
+		} else {
+			resource->reason_phrase = reason_phrase;
+			continue;
+		}
+
+		g_value_unset (&value);
+		g_free (reason_phrase);
+
+		property_type = GDAV_TYPE_GETCONTENTLENGTH_PROPERTY;
+		resource->status = gdav_response_find_property (
+			response, property_type, &value, &reason_phrase);
+		if (SOUP_STATUS_IS_SUCCESSFUL (resource->status)) {
+			resource->content_length = g_value_get_uint64 (&value);
+		} else {
+			resource->reason_phrase = reason_phrase;
+			continue;
+		}
+
+		g_value_unset (&value);
+		g_free (reason_phrase);
+
+		property_type = GDAV_TYPE_GETLASTMODIFIED_PROPERTY;
+		resource->status = gdav_response_find_property (
+			response, property_type, &value, &reason_phrase);
+		if (SOUP_STATUS_IS_SUCCESSFUL (resource->status)) {
+			resource->last_modified = g_value_dup_boxed (&value);
+		} else {
+			resource->reason_phrase = reason_phrase;
+			continue;
+		}
+
+		g_value_unset (&value);
+		g_free (reason_phrase);
+	}
+
+	g_list_free (list);
+
+}
+
+gboolean
+get_resource_list (SoupSession *session,
+                   SoupURI *uri,
+                   GDavDepth depth,
+                   GQueue *out_resources,
+                   GError **error)
+{
+	GDavPropertySet *prop;
+	GDavMultiStatus *multi_status;
+	guint ii, n_responses;
+
+	g_return_if_fail (SOUP_IS_SESSION (session));
+	g_return_if_fail (uri != NULL);
+	g_return_if_fail (out_resources != NULL);
+
+	prop = gdav_property_set_new ();
+	gdav_property_set_add_type (prop, GDAV_TYPE_RESOURCETYPE_PROPERTY);
+	gdav_property_set_add_type (prop, GDAV_TYPE_GETCONTENTLENGTH_PROPERTY);
+	gdav_property_set_add_type (prop, GDAV_TYPE_GETLASTMODIFIED_PROPERTY);
+
+	multi_status = gdav_propfind_sync (
+		session, uri, GDAV_PROPFIND_PROP, prop,
+		GDAV_DEPTH_1, NULL, NULL, error);
+
+	g_object_unref (prop);
+
+	if (multi_status == NULL)
+		return FALSE;
+
+	n_responses = gdav_multi_status_get_n_responses (multi_status);
+
+	for (ii = 0; ii < n_responses; ii++) {
+		GDavResponse *response;
+
+		response = gdav_multi_status_get_response (multi_status, ii);
+		process_response (response, out_resources);
+	}
+
+	g_object_unref (multi_status);
+
+	g_queue_sort (out_resources, compare_resources, NULL);
+
+	return TRUE;
+}
+
+void
+free_resource (Resource *resource)
+{
+	if (resource != NULL) {
+		if (resource->href != NULL)
+			soup_uri_free (resource->href);
+
+		g_free (resource->reason_phrase);
+
+		if (resource->last_modified != NULL)
+			soup_date_free (resource->last_modified);
+
+		g_slice_free (Resource, resource);
+	}
+}

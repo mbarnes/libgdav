@@ -22,6 +22,7 @@
 #include "commands.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -53,10 +54,72 @@ const static struct {
 };
 
 static void
+output_start (const gchar *action,
+              const gchar *target)
+{
+	g_print ("%s '%s':", action, target);
+}
+
+static void
+output_success (void)
+{
+	g_print ("%s\n", _("succeeded"));
+}
+
+static void
+output_result (const GError *error)
+{
+	if (error == NULL) {
+		output_success ();
+	} else {
+		g_print ("%s:\n%s\n", _("failed"), error->message);
+	}
+}
+
+static void
 handle_ls (GlobalState *state,
            gint argc,
            const gchar **argv)
 {
+	SoupURI *uri;
+	GQueue queue = G_QUEUE_INIT;
+	GError *local_error = NULL;
+
+	g_return_if_fail (state->base_uri != NULL);
+
+	if (argc == 0) {
+		uri = soup_uri_copy (state->base_uri);
+	} else {
+		uri = soup_uri_new_with_base (state->base_uri, argv[0]);
+	}
+
+	g_return_if_fail (uri != NULL);
+
+	output_start (_("Listing collection"), uri->path);
+
+	get_resource_list (
+		state->session, uri, GDAV_DEPTH_1, &queue, &local_error);
+
+	if (local_error != NULL) {
+		output_result (local_error);
+		g_error_free (local_error);
+
+	} else if (g_queue_is_empty (&queue)) {
+		g_print ("%s\n", _("collection is empty"));
+
+	} else {
+		Resource *resource;
+
+		output_success ();
+
+		while ((resource = g_queue_pop_head (&queue)) != NULL) {
+			if (!soup_uri_equal (uri, resource->href))
+				print_resource (resource);
+			free_resource (resource);
+		}
+	}
+
+	soup_uri_free (uri);
 }
 
 static void
@@ -64,6 +127,26 @@ handle_cd (GlobalState *state,
            gint argc,
            const gchar **argv)
 {
+	SoupURI *uri;
+
+	if (g_str_equal (argv[0], "-")) {
+		if (state->last_uri == NULL) {
+			g_print ("%s\n", _("No previous collection"));
+			return;
+		}
+		uri = soup_uri_copy (state->last_uri);
+	} else {
+		uri = soup_uri_new_with_base (state->base_uri, argv[0]);
+	}
+
+	g_return_if_fail (uri != NULL);
+
+	if (set_path (state, uri)) {
+		if (state->last_uri != NULL)
+			soup_uri_free (state->last_uri);
+		state->last_uri = state->base_uri;
+		state->base_uri = uri;
+	}
 }
 
 static void
@@ -71,6 +154,12 @@ handle_pwd (GlobalState *state,
             gint argc,
             const gchar **argv)
 {
+	gchar *uri_string;
+
+	uri_string = soup_uri_to_string (state->base_uri, FALSE);
+	g_print (_("Current collection is '%s'"), uri_string);
+	putchar ('\n');
+	g_free (uri_string);
 }
 
 static void
@@ -691,4 +780,51 @@ print_version (void)
 		glib_micro_version);
 }
 
+void
+print_resource (Resource *resource)
+{
+	const gchar *type;
+	gchar *name;
+	gsize len;
+
+	g_return_if_fail (resource != NULL);
+
+	if (resource->type & GDAV_RESOURCE_TYPE_COLLECTION)
+		type = "Coll:";
+	else if (resource->type & GDAV_RESOURCE_TYPE_REDIRECTREF)
+		type = "Ref:";
+	else
+		type = "";
+
+	len = strlen (resource->href->path);
+	if (resource->href->path[len - 1] == '/')
+		resource->href->path[len - 1] = '\0';
+
+	name = strrchr (resource->href->path, '/');
+	if (name != NULL && strlen (name + 1) > 0)
+		name++;
+	else
+		name = resource->href->path;
+
+	/* Allocates a new string. */
+	name = soup_uri_decode (name);
+
+	if (SOUP_STATUS_IS_SUCCESSFUL (resource->status)) {
+		gchar *date;
+
+		date = soup_date_to_string (
+			resource->last_modified, SOUP_DATE_RFC2822);
+		g_print (
+			"%5s %-29s %10" G_GUINT64_FORMAT "  %s\n",
+			type, name, resource->content_length, date);
+		g_free (date);
+	} else {
+		g_print (
+			"%s: %-30s %u %s\n",
+			_("Error"), name,
+			resource->status,
+			(resource->reason_phrase != NULL) ?
+			resource->reason_phrase : _("unspecified"));
+	}
+}
 

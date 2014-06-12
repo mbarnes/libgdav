@@ -25,6 +25,7 @@
 const Command *	get_command			(const gchar *name);
 void		print_commands			(void);
 void		print_version			(void);
+void		print_resource			(Resource *resource);
 
 #endif /* __COMMANDS_H__ */
 

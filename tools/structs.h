@@ -29,6 +29,7 @@
 
 typedef struct {
 	SoupURI *base_uri;
+	SoupURI *last_uri;
 	SoupSession *session;
 	gboolean connected;
 	gboolean isdav;
@@ -49,6 +50,15 @@ typedef struct {
 	const gchar *usage;
 	const gchar *blurb;
 } Command;
+
+typedef struct {
+	SoupURI *href;
+	guint status;
+	gchar *reason_phrase;
+	GDavResourceType type;
+	guint64 content_length;
+	SoupDate *last_modified;
+} Resource;
 
 #endif /* __STRUCTS_H__ */
 

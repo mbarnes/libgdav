@@ -38,11 +38,12 @@ GDavResourceType
 						 SoupURI *uri,
 						 GError **error);
 
-gboolean	fetch_resource_list		(SoupSession *session,
-						 const gchar *uri,
+gboolean	get_resource_list		(SoupSession *session,
+						 SoupURI *uri,
 						 GDavDepth depth,
-						 GQueue *out_responses,
+						 GQueue *out_resources,
 						 GError **error);
+void		free_resource			(Resource *resource);
 
 #endif /* __UTILS_H__ */
 
