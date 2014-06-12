@@ -26,16 +26,6 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GDavAsyncClosure GDavAsyncClosure;
-
-GDavAsyncClosure *
-		gdav_async_closure_new		(void);
-GAsyncResult *	gdav_async_closure_wait		(GDavAsyncClosure *closure);
-void		gdav_async_closure_free		(GDavAsyncClosure *closure);
-void		gdav_async_closure_callback	(GObject *object,
-						 GAsyncResult *result,
-						 gpointer closure);
-
 GDavAllow	gdav_allow_from_headers		(SoupMessageHeaders *headers);
 GDavOptions	gdav_options_from_headers	(SoupMessageHeaders *headers);
 
