@@ -87,8 +87,8 @@ struct _GDavParsableClass {
  *   Empty document.
  * @GDAV_PARSABLE_ERROR_UNKNOWN_ELEMENT:
  *   No #GDavParsable class for XML element.
- * @GDAV_PARSABLE_ERROR_UNEXPECTED_ELEMENT:
- *   Unexpected XML element (violates DTD).
+ * @GDAV_PARSABLE_ERROR_CONTENT_VIOLATION:
+ *   Response data violates a Document Type Definition (DTD).
  * @GDAV_PARSABLE_ERROR_INTERNAL:
  *   Internal error while serializing or deserializing.
  *
@@ -98,7 +98,7 @@ typedef enum {
 	GDAV_PARSABLE_ERROR_PARSER_FAILED,
 	GDAV_PARSABLE_ERROR_EMPTY_DOCUMENT,
 	GDAV_PARSABLE_ERROR_UNKNOWN_ELEMENT,
-	GDAV_PARSABLE_ERROR_UNEXPECTED_ELEMENT,
+	GDAV_PARSABLE_ERROR_CONTENT_VIOLATION,
 	GDAV_PARSABLE_ERROR_INTERNAL
 } GDavParsableError;
 
