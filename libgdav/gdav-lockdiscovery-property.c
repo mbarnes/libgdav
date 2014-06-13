@@ -24,10 +24,10 @@
 G_DEFINE_TYPE (
 	GDavLockDiscoveryProperty,
 	gdav_lockdiscovery_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_LIST_PROPERTY)
 
 static void
-gdav_lockdiscovery_property_class_init (GDavPropertyClass *class)
+gdav_lockdiscovery_property_class_init (GDavListPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
@@ -35,11 +35,11 @@ gdav_lockdiscovery_property_class_init (GDavPropertyClass *class)
 	parsable_class->element_name = "lockdiscovery";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
 
-	class->value_type = G_TYPE_PTR_ARRAY;
+	class->element_type = GDAV_TYPE_ACTIVE_LOCK;
 }
 
 static void
-gdav_lockdiscovery_property_init (GDavLockDiscoveryProperty *property)
+gdav_lockdiscovery_property_init (GDavListProperty *property)
 {
 }
 

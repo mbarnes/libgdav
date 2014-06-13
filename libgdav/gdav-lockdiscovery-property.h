@@ -20,7 +20,8 @@
 #ifndef __GDAV_LOCKDISCOVERY_PROPERTY_H__
 #define __GDAV_LOCKDISCOVERY_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-active-lock.h>
+#include <libgdav/gdav-list-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_LOCKDISCOVERY_PROPERTY \
@@ -31,8 +32,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavLockDiscoveryProperty;
-typedef GDavPropertyClass GDavLockDiscoveryPropertyClass;
+typedef GDavListProperty GDavLockDiscoveryProperty;
+typedef GDavListPropertyClass GDavLockDiscoveryPropertyClass;
 
 GType		gdav_lockdiscovery_property_get_type
 						(void) G_GNUC_CONST;

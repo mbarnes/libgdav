@@ -24,10 +24,10 @@
 G_DEFINE_TYPE (
 	GDavSupportedLockProperty,
 	gdav_supportedlock_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_LIST_PROPERTY)
 
 static void
-gdav_supportedlock_property_class_init (GDavPropertyClass *class)
+gdav_supportedlock_property_class_init (GDavListPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
@@ -35,11 +35,11 @@ gdav_supportedlock_property_class_init (GDavPropertyClass *class)
 	parsable_class->element_name = "supportedlock";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
 
-	class->value_type = G_TYPE_PTR_ARRAY;
+	class->element_type = GDAV_TYPE_LOCK_ENTRY;
 }
 
 static void
-gdav_supportedlock_property_init (GDavProperty *property)
+gdav_supportedlock_property_init (GDavListProperty *property)
 {
 }
 

@@ -20,7 +20,8 @@
 #ifndef __GDAV_SUPPORTEDLOCK_PROPERTY_H__
 #define __GDAV_SUPPORTEDLOCK_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-lock-entry.h>
+#include <libgdav/gdav-list-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_SUPPORTEDLOCK_PROPERTY \
@@ -31,8 +32,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavSupportedLockProperty;
-typedef GDavPropertyClass GDavSupportedLockPropertyClass;
+typedef GDavListProperty GDavSupportedLockProperty;
+typedef GDavListPropertyClass GDavSupportedLockPropertyClass;
 
 GType		gdav_supportedlock_property_get_type
 						(void) G_GNUC_CONST;
