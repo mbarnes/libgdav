@@ -349,3 +349,33 @@ gdav_parsable_collect_types (GDavParsable *parsable,
 		class->collect_types (parsable, parsable_types);
 }
 
+xmlNode *
+gdav_parsable_new_text_child (GType parsable_type,
+                              GHashTable *namespaces,
+                              xmlNode *parent,
+                              const xmlChar *content)
+{
+	GDavParsableClass *class;
+	const xmlChar *name;
+	xmlNode *node;
+	xmlNs *ns = NULL;
+
+	g_return_val_if_fail (
+		g_type_is_a (parsable_type, GDAV_TYPE_PARSABLE), NULL);
+	g_return_val_if_fail (namespaces != NULL, NULL);
+
+	class = g_type_class_ref (parsable_type);
+
+	if (class->element_namespace != NULL) {
+		ns = g_hash_table_lookup (
+			namespaces, class->element_namespace);
+	}
+
+	name = BAD_CAST class->element_name;
+	node = xmlNewTextChild (parent, ns, name, content);
+
+	g_type_class_unref (class);
+
+	return node;
+}
+

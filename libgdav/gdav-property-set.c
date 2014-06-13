@@ -111,21 +111,16 @@ gdav_property_set_serialize (GDavParsable *parsable,
                              GError **error)
 {
 	GDavPropertySetPrivate *priv;
-	GDavParsableClass *class;
 	GHashTableIter iter;
 	GList *list, *link;
 	xmlNode *node;
-	xmlNs *ns;
 	gpointer key;
 	gboolean success = TRUE;
 
 	priv = GDAV_PROPERTY_SET_GET_PRIVATE (parsable);
 
-	class = GDAV_PARSABLE_GET_CLASS (parsable);
-	ns = g_hash_table_lookup (namespaces, class->element_namespace);
-
-	node = xmlNewTextChild (
-		parent, ns, BAD_CAST class->element_name, NULL);
+	node = gdav_parsable_new_text_child (
+		G_OBJECT_TYPE (parsable), namespaces, parent, NULL);
 
 	if (priv->names_only)
 		goto names_only;
@@ -147,18 +142,7 @@ names_only:
 
 	while (g_hash_table_iter_next (&iter, &key, NULL)) {
 		GType type = GPOINTER_TO_SIZE (key);
-
-		g_return_val_if_fail (
-			g_type_is_a (type, GDAV_TYPE_PARSABLE), FALSE);
-
-		class = g_type_class_ref (type);
-
-		ns = g_hash_table_lookup (
-			namespaces, class->element_namespace);
-		xmlNewTextChild (
-			node, ns, BAD_CAST class->element_name, NULL);
-
-		g_type_class_unref (class);
+		gdav_parsable_new_text_child (type, namespaces, node, NULL);
 	}
 
 	return TRUE;

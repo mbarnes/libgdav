@@ -84,8 +84,8 @@ gdav_resourcetype_property_serialize (GDavParsable *parsable,
 	resource_type = g_value_get_flags (&value);
 	g_value_unset (&value);
 
-	ns = g_hash_table_lookup (namespaces, GDAV_XMLNS_DAV);
-	node = xmlNewTextChild (parent, ns, BAD_CAST "resourcetype", NULL);
+	node = gdav_parsable_new_text_child (
+		G_OBJECT_TYPE (parsable), namespaces, parent, NULL);
 
 	for (ii = 0; ii < G_N_ELEMENTS (xml_map); ii++) {
 		if (resource_type & xml_map[ii].flag) {

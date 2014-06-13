@@ -131,6 +131,12 @@ gboolean	gdav_parsable_deserialize	(GDavParsable *parsable,
 void		gdav_parsable_collect_types	(GDavParsable *parsable,
 						 GHashTable *parsable_types);
 
+/* Helpful utilities for subclasses. */
+xmlNode *	gdav_parsable_new_text_child	(GType parsable_type,
+						 GHashTable *namespaces,
+						 xmlNode *parent,
+						 const xmlChar *content);
+
 G_END_DECLS
 
 #endif /* __GDAV_PARSABLE_H__ */
