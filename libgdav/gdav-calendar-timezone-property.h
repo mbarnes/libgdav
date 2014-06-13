@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_CALENDAR_TIMEZONE_PROPERTY \
 	(gdav_calendar_timezone_property_get_type ())
-#define GDAV_CALENDAR_TIMEZONE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_CALENDAR_TIMEZONE_PROPERTY, GDavCalendarTimeZoneProperty))
 #define GDAV_IS_CALENDAR_TIMEZONE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_CALENDAR_TIMEZONE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavCalendarTimeZoneProperty GDavCalendarTimeZoneProperty;
-typedef struct _GDavCalendarTimeZonePropertyClass GDavCalendarTimeZonePropertyClass;
-typedef struct _GDavCalendarTimeZonePropertyPrivate GDavCalendarTimeZonePropertyPrivate;
-
-struct _GDavCalendarTimeZoneProperty {
-	GDavProperty parent;
-	GDavCalendarTimeZonePropertyPrivate *priv;
-};
-
-struct _GDavCalendarTimeZonePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavCalendarTimeZoneProperty;
+typedef GDavPropertyClass GDavCalendarTimeZonePropertyClass;
 
 GType		gdav_calendar_timezone_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_calendar_timezone_property_new
-					(const gchar *prop_value);
+						(const gchar *prop_value);
 
 G_END_DECLS
 

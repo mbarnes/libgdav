@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_GETLASTMODIFIED_PROPERTY \
 	(gdav_getlastmodified_property_get_type ())
-#define GDAV_GETLASTMODIFIED_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_GETLASTMODIFIED_PROPERTY, GDavGetLastModifiedProperty))
 #define GDAV_IS_GETLASTMODIFIED_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_GETLASTMODIFIED_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavGetLastModifiedProperty GDavGetLastModifiedProperty;
-typedef struct _GDavGetLastModifiedPropertyClass GDavGetLastModifiedPropertyClass;
-typedef struct _GDavGetLastModifiedPropertyPrivate GDavGetLastModifiedPropertyPrivate;
-
-struct _GDavGetLastModifiedProperty {
-	GDavProperty parent;
-	GDavGetLastModifiedPropertyPrivate *priv;
-};
-
-struct _GDavGetLastModifiedPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavGetLastModifiedProperty;
+typedef GDavPropertyClass GDavGetLastModifiedPropertyClass;
 
 GType		gdav_getlastmodified_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_getlastmodified_property_new
-					(GDateTime *prop_value);
+						(SoupDate *prop_value);
 
 G_END_DECLS
 

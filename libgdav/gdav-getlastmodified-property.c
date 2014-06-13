@@ -27,33 +27,31 @@ G_DEFINE_TYPE (
 	GDAV_TYPE_PROPERTY)
 
 static void
-gdav_getlastmodified_property_class_init (GDavGetLastModifiedPropertyClass *class)
+gdav_getlastmodified_property_class_init (GDavPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
-	GDavPropertyClass *property_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "getlastmodified";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
 
-	property_class = GDAV_PROPERTY_CLASS (class);
-	property_class->value_type = G_TYPE_DATE_TIME;
+	class->value_type = SOUP_TYPE_DATE;
 }
 
 static void
-gdav_getlastmodified_property_init (GDavGetLastModifiedProperty *property)
+gdav_getlastmodified_property_init (GDavProperty *property)
 {
 }
 
 GDavProperty *
-gdav_getlastmodified_property_new (GDateTime *prop_value)
+gdav_getlastmodified_property_new (SoupDate *prop_value)
 {
 	GDavProperty *property;
 	GValue value = G_VALUE_INIT;
 
 	g_return_val_if_fail (prop_value != NULL, NULL);
 
-	g_value_init (&value, G_TYPE_DATE_TIME);
+	g_value_init (&value, SOUP_TYPE_DATE);
 	g_value_set_boxed (&value, prop_value);
 
 	property = g_object_new (

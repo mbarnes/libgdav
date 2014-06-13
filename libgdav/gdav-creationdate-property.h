@@ -25,32 +25,18 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_CREATIONDATE_PROPERTY \
 	(gdav_creationdate_property_get_type ())
-#define GDAV_CREATIONDATE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_CREATIONDATE_PROPERTY, GDavCreationDateProperty))
 #define GDAV_IS_CREATIONDATE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_CREATIONDATE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavCreationDateProperty GDavCreationDateProperty;
-typedef struct _GDavCreationDatePropertyClass GDavCreationDatePropertyClass;
-typedef struct _GDavCreationDatePropertyPrivate GDavCreationDatePropertyPrivate;
-
-struct _GDavCreationDateProperty {
-	GDavProperty parent;
-	GDavCreationDatePropertyPrivate *priv;
-};
-
-struct _GDavCreationDatePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavCreationDateProperty;
+typedef GDavPropertyClass GDavCreationDatePropertyClass;
 
 GType		gdav_creationdate_property_get_type
-					(void) G_GNUC_CONST;
-GDavProperty *	gdav_creationdate_property_new
-					(GDateTime *prop_value);
+						(void) G_GNUC_CONST;
+GDavProperty *	gdav_creationdate_property_new	(GDateTime *prop_value);
 
 G_END_DECLS
 

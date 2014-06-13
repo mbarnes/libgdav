@@ -27,21 +27,19 @@ G_DEFINE_TYPE (
 	GDAV_TYPE_PROPERTY)
 
 static void
-gdav_supported_calendar_data_property_class_init (GDavSupportedCalendarDataPropertyClass *class)
+gdav_supported_calendar_data_property_class_init (GDavPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
-	GDavPropertyClass *property_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "supported-calendar-data";
 	parsable_class->element_namespace = GDAV_XMLNS_CALDAV;
 
-	property_class = GDAV_PROPERTY_CLASS (class);
-	property_class->value_type = G_TYPE_PTR_ARRAY;
+	class->value_type = G_TYPE_PTR_ARRAY;
 }
 
 static void
-gdav_supported_calendar_data_property_init (GDavSupportedCalendarDataProperty *property)
+gdav_supported_calendar_data_property_init (GDavProperty *property)
 {
 }
 

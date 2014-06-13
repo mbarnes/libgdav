@@ -25,30 +25,17 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_SUPPORTED_CALENDAR_DATA_PROPERTY \
 	(gdav_supported_calendar_data_property_get_type ())
-#define GDAV_SUPPORTED_CALENDAR_DATA_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_SUPPORTED_CALENDAR_DATA_PROPERTY, GDavSupportedCalendarDataProperty))
 #define GDAV_IS_SUPPORTED_CALENDAR_DATA_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_SUPPORTED_CALENDAR_DATA_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavSupportedCalendarDataProperty GDavSupportedCalendarDataProperty;
-typedef struct _GDavSupportedCalendarDataPropertyClass GDavSupportedCalendarDataPropertyClass;
-typedef struct _GDavSupportedCalendarDataPropertyPrivate GDavSupportedCalendarDataPropertyPrivate;
-
-struct _GDavSupportedCalendarDataProperty {
-	GDavProperty parent;
-	GDavSupportedCalendarDataPropertyPrivate *priv;
-};
-
-struct _GDavSupportedCalendarDataPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavSupportedCalendarDataProperty;
+typedef GDavPropertyClass GDavSupportedCalendarDataPropertyClass;
 
 GType		gdav_supported_calendar_data_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 
 G_END_DECLS
 

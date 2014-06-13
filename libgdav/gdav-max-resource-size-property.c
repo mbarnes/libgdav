@@ -27,21 +27,19 @@ G_DEFINE_TYPE (
 	GDAV_TYPE_PROPERTY)
 
 static void
-gdav_max_resource_size_property_class_init (GDavMaxResourceSizePropertyClass *class)
+gdav_max_resource_size_property_class_init (GDavPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
-	GDavPropertyClass *property_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "max-resource-size";
 	parsable_class->element_namespace = GDAV_XMLNS_CALDAV;
 
-	property_class = GDAV_PROPERTY_CLASS (class);
-	property_class->value_type = G_TYPE_UINT64;
+	class->value_type = G_TYPE_UINT64;
 }
 
 static void
-gdav_max_resource_size_property_init (GDavMaxResourceSizeProperty *property)
+gdav_max_resource_size_property_init (GDavProperty *property)
 {
 }
 

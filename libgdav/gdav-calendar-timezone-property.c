@@ -27,21 +27,19 @@ G_DEFINE_TYPE (
 	GDAV_TYPE_PROPERTY)
 
 static void
-gdav_calendar_timezone_property_class_init (GDavCalendarTimeZonePropertyClass *class)
+gdav_calendar_timezone_property_class_init (GDavPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
-	GDavPropertyClass *property_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "calendar-timezone";
 	parsable_class->element_namespace = GDAV_XMLNS_CALDAV;
 
-	property_class = GDAV_PROPERTY_CLASS (class);
-	property_class->value_type = G_TYPE_STRING;
+	class->value_type = G_TYPE_STRING;
 }
 
 static void
-gdav_calendar_timezone_property_init (GDavCalendarTimeZoneProperty *property)
+gdav_calendar_timezone_property_init (GDavProperty *property)
 {
 }
 

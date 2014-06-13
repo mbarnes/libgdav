@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY \
 	(gdav_max_resource_size_property_get_type ())
-#define GDAV_MAX_RESOURCE_SIZE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY, GDavMaxResourceSizeProperty))
 #define GDAV_IS_MAX_RESOURCE_SIZE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavMaxResourceSizeProperty GDavMaxResourceSizeProperty;
-typedef struct _GDavMaxResourceSizePropertyClass GDavMaxResourceSizePropertyClass;
-typedef struct _GDavMaxResourceSizePropertyPrivate GDavMaxResourceSizePropertyPrivate;
-
-struct _GDavMaxResourceSizeProperty {
-	GDavProperty parent;
-	GDavMaxResourceSizePropertyPrivate *priv;
-};
-
-struct _GDavMaxResourceSizePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavMaxResourceSizeProperty;
+typedef GDavPropertyClass GDavMaxResourceSizePropertyClass;
 
 GType		gdav_max_resource_size_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_max_resource_size_property_new
-					(guint64 prop_value);
+						(guint64 prop_value);
 
 G_END_DECLS
 

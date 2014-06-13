@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTLENGTH_PROPERTY \
 	(gdav_getcontentlength_property_get_type ())
-#define GDAV_GETCONTENTLENGTH_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_GETCONTENTLENGTH_PROPERTY, GDavGetContentLengthProperty))
 #define GDAV_IS_GETCONTENTLENGTH_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_GETCONTENTLENGTH_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavGetContentLengthProperty GDavGetContentLengthProperty;
-typedef struct _GDavGetContentLengthPropertyClass GDavGetContentLengthPropertyClass;
-typedef struct _GDavGetContentLengthPropertyPrivate GDavGetContentLengthPropertyPrivate;
-
-struct _GDavGetContentLengthProperty {
-	GDavProperty parent;
-	GDavGetContentLengthPropertyPrivate *priv;
-};
-
-struct _GDavGetContentLengthPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavGetContentLengthProperty;
+typedef GDavPropertyClass GDavGetContentLengthPropertyClass;
 
 GType		gdav_getcontentlength_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_getcontentlength_property_new
-					(guint64 prop_value);
+						(guint64 prop_value);
 
 G_END_DECLS
 

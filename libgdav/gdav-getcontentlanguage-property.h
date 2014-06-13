@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTLANGUAGE_PROPERTY \
 	(gdav_getcontentlanguage_property_get_type ())
-#define GDAV_GETCONTENTLANGUAGE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_GETCONTENTLANGUAGE_PROPERTY, GDavGetContentLanguageProperty))
 #define GDAV_IS_GETCONTENTLANGUAGE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_GETCONTENTLANGUAGE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavGetContentLanguageProperty GDavGetContentLanguageProperty;
-typedef struct _GDavGetContentLanguagePropertyClass GDavGetContentLanguagePropertyClass;
-typedef struct _GDavGetContentLanguagePropertyPrivate GDavGetContentLanguagePropertyPrivate;
-
-struct _GDavGetContentLanguageProperty {
-	GDavProperty parent;
-	GDavGetContentLanguagePropertyPrivate *priv;
-};
-
-struct _GDavGetContentLanguagePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavGetContentLanguageProperty;
+typedef GDavPropertyClass GDavGetContentLanguagePropertyClass;
 
 GType		gdav_getcontentlanguage_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_getcontentlanguage_property_new
-					(const gchar *prop_value);
+						(const gchar *prop_value);
 
 G_END_DECLS
 

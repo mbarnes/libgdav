@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_CALENDAR_DESCRIPTION_PROPERTY \
 	(gdav_calendar_description_property_get_type ())
-#define GDAV_CALENDAR_DESCRIPTION_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_CALENDAR_DESCRIPTION_PROPERTY, GDavCalendarDescriptionProperty))
 #define GDAV_IS_CALENDAR_DESCRIPTION_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_CALENDAR_DESCRIPTION_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavCalendarDescriptionProperty GDavCalendarDescriptionProperty;
-typedef struct _GDavCalendarDescriptionPropertyClass GDavCalendarDescriptionPropertyClass;
-typedef struct _GDavCalendarDescriptionPropertyPrivate GDavCalendarDescriptionPropertyPrivate;
-
-struct _GDavCalendarDescriptionProperty {
-	GDavProperty parent;
-	GDavCalendarDescriptionPropertyPrivate *priv;
-};
-
-struct _GDavCalendarDescriptionPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavCalendarDescriptionProperty;
+typedef GDavPropertyClass GDavCalendarDescriptionPropertyClass;
 
 GType		gdav_calendar_description_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_calendar_description_property_new
-					(const gchar *prop_value);
+						(const gchar *prop_value);
 
 G_END_DECLS
 

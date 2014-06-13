@@ -25,30 +25,17 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_SUPPORTEDLOCK_PROPERTY \
 	(gdav_supportedlock_property_get_type ())
-#define GDAV_SUPPORTEDLOCK_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_SUPPORTEDLOCK_PROPERTY, GDavSupportedLockProperty))
 #define GDAV_IS_SUPPORTEDLOCK_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_SUPPORTEDLOCK_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavSupportedLockProperty GDavSupportedLockProperty;
-typedef struct _GDavSupportedLockPropertyClass GDavSupportedLockPropertyClass;
-typedef struct _GDavSupportedLockPropertyPrivate GDavSupportedLockPropertyPrivate;
-
-struct _GDavSupportedLockProperty {
-	GDavProperty parent;
-	GDavSupportedLockPropertyPrivate *priv;
-};
-
-struct _GDavSupportedLockPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavSupportedLockProperty;
+typedef GDavPropertyClass GDavSupportedLockPropertyClass;
 
 GType		gdav_supportedlock_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 
 G_END_DECLS
 

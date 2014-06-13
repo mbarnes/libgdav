@@ -26,32 +26,18 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_RESOURCETYPE_PROPERTY \
 	(gdav_resourcetype_property_get_type ())
-#define GDAV_RESOURCETYPE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_RESOURCETYPE_PROPERTY, GDavResourceTypeProperty))
 #define GDAV_IS_RESOURCETYPE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_RESOURCETYPE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavResourceTypeProperty GDavResourceTypeProperty;
-typedef struct _GDavResourceTypePropertyClass GDavResourceTypePropertyClass;
-typedef struct _GDavResourceTypePropertyPrivate GDavResourceTypePropertyPrivate;
-
-struct _GDavResourceTypeProperty {
-	GDavProperty parent;
-	GDavResourceTypePropertyPrivate *priv;
-};
-
-struct _GDavResourceTypePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavResourceTypeProperty;
+typedef GDavPropertyClass GDavResourceTypePropertyClass;
 
 GType		gdav_resourcetype_property_get_type
-					(void) G_GNUC_CONST;
-GDavProperty *	gdav_resourcetype_property_new
-					(GDavResourceType prop_value);
+						(void) G_GNUC_CONST;
+GDavProperty *	gdav_resourcetype_property_new	(GDavResourceType prop_value);
 
 #endif /* __GDAV_RESOURCETYPE_PROPERTY_H__ */
 

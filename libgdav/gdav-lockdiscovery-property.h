@@ -25,30 +25,17 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_LOCKDISCOVERY_PROPERTY \
 	(gdav_lockdiscovery_property_get_type ())
-#define GDAV_LOCKDISCOVERY_PROPRETY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_LOCKDISCOVERY_PROPERTY, GDavLockDiscoveryProperty))
 #define GDAV_IS_LOCKDISCOVERY_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_LOCKDISCOVERY_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavLockDiscoveryProperty GDavLockDiscoveryProperty;
-typedef struct _GDavLockDiscoveryPropertyClass GDavLockDiscoveryPropertyClass;
-typedef struct _GDavLockDiscoveryPropertyPrivate GDavLockDiscoveryPropertyPrivate;
-
-struct _GDavLockDiscoveryProperty {
-	GDavProperty parent;
-	GDavLockDiscoveryPropertyPrivate *priv;
-};
-
-struct _GDavLockDiscoveryPropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavLockDiscoveryProperty;
+typedef GDavPropertyClass GDavLockDiscoveryPropertyClass;
 
 GType		gdav_lockdiscovery_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 
 #endif /* __GDAV_LOCKDISCOVERY_PROPERTY_H__ */
 

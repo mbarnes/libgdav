@@ -115,10 +115,9 @@ chainup:
 }
 
 static void
-gdav_resourcetype_property_class_init (GDavResourceTypePropertyClass *class)
+gdav_resourcetype_property_class_init (GDavPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
-	GDavPropertyClass *property_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "resourcetype";
@@ -126,12 +125,11 @@ gdav_resourcetype_property_class_init (GDavResourceTypePropertyClass *class)
 	parsable_class->serialize = gdav_resourcetype_property_serialize;
 	parsable_class->deserialize = gdav_resourcetype_property_deserialize;
 
-	property_class = GDAV_PROPERTY_CLASS (class);
-	property_class->value_type = GDAV_TYPE_RESOURCE_TYPE;
+	class->value_type = GDAV_TYPE_RESOURCE_TYPE;
 }
 
 static void
-gdav_resourcetype_property_init (GDavResourceTypeProperty *property)
+gdav_resourcetype_property_init (GDavProperty *property)
 {
 }
 

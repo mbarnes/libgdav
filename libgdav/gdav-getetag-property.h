@@ -25,32 +25,17 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_GETETAG_PROPERTY \
 	(gdav_getetag_property_get_type ())
-#define GDAV_GETETAG_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_GETETAG_PROPERTY, GDavGetETagProperty))
 #define GDAV_IS_GETETAG_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_GETETAG_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavGetETagProperty GDavGetETagProperty;
-typedef struct _GDavGetETagPropertyClass GDavGetETagPropertyClass;
-typedef struct _GDavGetETagPropertyPrivate GDavGetETagPropertyPrivate;
+typedef GDavProperty GDavGetETagProperty;
+typedef GDavPropertyClass GDavGetETagPropertyClass;
 
-struct _GDavGetETagProperty {
-	GDavProperty parent;
-	GDavGetETagPropertyPrivate *priv;
-};
-
-struct _GDavGetETagPropertyClass {
-	GDavPropertyClass parent_class;
-};
-
-GType		gdav_getetag_property_get_type
-					(void) G_GNUC_CONST;
-GDavProperty *	gdav_getetag_property_new
-					(const gchar *prop_value);
+GType		gdav_getetag_property_get_type	(void) G_GNUC_CONST;
+GDavProperty *	gdav_getetag_property_new	(const gchar *prop_value);
 
 G_END_DECLS
 

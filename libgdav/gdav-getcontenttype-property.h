@@ -25,32 +25,19 @@
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTTYPE_PROPERTY \
 	(gdav_getcontenttype_property_get_type ())
-#define GDAV_GETCONTENTTYPE_PROPERTY(obj) \
-	(G_TYPE_CHECK_INSTANCE_CAST \
-	((obj), GDAV_TYPE_GETCONTENTTYPE_PROPERTY, GDavGetContentTypeProperty))
 #define GDAV_IS_GETCONTENTTYPE_PROPERTY(obj) \
 	(G_TYPE_CHECK_INSTANCE_TYPE \
 	((obj), GDAV_TYPE_GETCONTENTTYPE_PROPERTY))
 
 G_BEGIN_DECLS
 
-typedef struct _GDavGetContentTypeProperty GDavGetContentTypeProperty;
-typedef struct _GDavGetContentTypePropertyClass GDavGetContentTypePropertyClass;
-typedef struct _GDavGetContentTypePropertyPrivate GDavGetContentTypePropertyPrivate;
-
-struct _GDavGetContentTypeProperty {
-	GDavProperty parent;
-	GDavGetContentTypePropertyPrivate *priv;
-};
-
-struct _GDavGetContentTypePropertyClass {
-	GDavPropertyClass parent_class;
-};
+typedef GDavProperty GDavGetContentTypeProperty;
+typedef GDavPropertyClass GDavGetContentTypePropertyClass;
 
 GType		gdav_getcontenttype_property_get_type
-					(void) G_GNUC_CONST;
+						(void) G_GNUC_CONST;
 GDavProperty *	gdav_getcontenttype_property_new
-					(const gchar *prop_value);
+						(const gchar *prop_value);
 
 G_END_DECLS
 
