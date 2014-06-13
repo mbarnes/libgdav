@@ -133,30 +133,17 @@ gdav_response_deserialize_dav (GDavParsable *parsable,
 	/* Handle nodes in the GDAV_XMLNS_DAV namespace. */
 
 	if (xmlStrcmp (node->name, BAD_CAST "href") == 0) {
-		xmlChar *text;
 		SoupURI *uri;
-		gboolean success;
 
-		text = xmlNodeListGetString (doc, node->children, TRUE);
+		uri = gdav_parsable_deserialize_href (
+			parsable, base_uri, doc, node, error);
 
-		uri = soup_uri_new_with_base (base_uri, (gchar *) text);
-		success = SOUP_URI_VALID_FOR_HTTP (uri);
+		if (uri == NULL)
+			return FALSE;
 
-		if (success) {
-			g_ptr_array_add (priv->hrefs, uri);
-		} else {
-			g_set_error (
-				error, GDAV_PARSABLE_ERROR,
-				GDAV_PARSABLE_ERROR_INTERNAL,
-				_("Invalid href value '%s'"),
-				text);
-			if (uri != NULL)
-				soup_uri_free (uri);
-		}
+		g_ptr_array_add (priv->hrefs, uri);
 
-		xmlFree (text);
-
-		return success;
+		return TRUE;
 	}
 
 	if (xmlStrcmp (node->name, BAD_CAST "status") == 0) {

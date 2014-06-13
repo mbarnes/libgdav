@@ -379,3 +379,39 @@ gdav_parsable_new_text_child (GType parsable_type,
 	return node;
 }
 
+SoupURI *
+gdav_parsable_deserialize_href (GDavParsable *parsable,
+                                SoupURI *base_uri,
+                                xmlDoc *doc,
+                                xmlNode *href,
+                                GError **error)
+{
+	xmlChar *text;
+	SoupURI *uri;
+
+	g_return_val_if_fail (GDAV_IS_PARSABLE (parsable), NULL);
+	g_return_val_if_fail (base_uri != NULL, NULL);
+	g_return_val_if_fail (doc != NULL, NULL);
+	g_return_val_if_fail (href != NULL, NULL);
+
+	text = xmlNodeListGetString (doc, href->children, TRUE);
+
+	uri = soup_uri_new_with_base (base_uri, (gchar *) text);
+
+	if (!SOUP_URI_VALID_FOR_HTTP (uri)) {
+		g_set_error (
+			error, GDAV_PARSABLE_ERROR,
+			GDAV_PARSABLE_ERROR_INTERNAL,
+			_("Invalid href value '%s'"),
+			(gchar *) text);
+		if (uri != NULL) {
+			soup_uri_free (uri);
+			uri = NULL;
+		}
+	}
+
+	xmlFree (text);
+
+	return uri;
+}
+

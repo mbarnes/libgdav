@@ -136,6 +136,11 @@ xmlNode *	gdav_parsable_new_text_child	(GType parsable_type,
 						 GHashTable *namespaces,
 						 xmlNode *parent,
 						 const xmlChar *content);
+SoupURI *	gdav_parsable_deserialize_href	(GDavParsable *parsable,
+						 SoupURI *base_uri,
+						 xmlDoc *doc,
+						 xmlNode *href,
+						 GError **error);
 
 G_END_DECLS
 
