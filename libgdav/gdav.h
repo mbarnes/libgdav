@@ -58,6 +58,7 @@
 #include <libgdav/gdav-calendar-description-property.h>
 #include <libgdav/gdav-calendar-timezone-property.h>
 #include <libgdav/gdav-max-resource-size-property.h>
+#include <libgdav/gdav-schedule-outbox-url-property.h>
 #include <libgdav/gdav-supported-calendar-component-set-property.h>
 #include <libgdav/gdav-supported-calendar-data-property.h>
 
