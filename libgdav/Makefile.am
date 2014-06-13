@@ -53,6 +53,7 @@ libgdav_headers = \
 	gdav-enums.h \
 	gdav-enumtypes.h \
 	gdav-error.h \
+	gdav-href-property.h \
 	gdav-lock-entry.h \
 	gdav-lockdiscovery-property.h \
 	gdav-max-resource-size-property.h \
@@ -89,6 +90,7 @@ libgdav_la_SOURCES = \
 	gdav-getetag-property.c \
 	gdav-getlastmodified-property.c \
 	gdav-error.c \
+	gdav-href-property.c \
 	gdav-lock-entry.c \
 	gdav-lockdiscovery-property.c \
 	gdav-max-resource-size-property.c \

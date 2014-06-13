@@ -27,6 +27,7 @@
 #include <libgdav/gdav-active-lock.h>
 #include <libgdav/gdav-date-property.h>
 #include <libgdav/gdav-error.h>
+#include <libgdav/gdav-href-property.h>
 #include <libgdav/gdav-lock-entry.h>
 #include <libgdav/gdav-methods.h>
 #include <libgdav/gdav-multi-status.h>
