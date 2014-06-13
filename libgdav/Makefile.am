@@ -68,6 +68,7 @@ libgdav_headers = \
 	gdav-requests.h \
 	gdav-resourcetype-property.h \
 	gdav-response.h \
+	gdav-schedule-inbox-url-property.h \
 	gdav-schedule-outbox-url-property.h \
 	gdav-supported-calendar-component-set-property.h \
 	gdav-supported-calendar-data-property.h \
@@ -107,6 +108,7 @@ libgdav_la_SOURCES = \
 	gdav-requests.c \
 	gdav-resourcetype-property.c \
 	gdav-response.c \
+	gdav-schedule-inbox-url-property.c \
 	gdav-schedule-outbox-url-property.c \
 	gdav-supported-calendar-component-set-property.c \
 	gdav-supported-calendar-data-property.c \
