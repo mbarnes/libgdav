@@ -43,6 +43,7 @@ libgdav_headers = \
 	gdav-calendar-description-property.h \
 	gdav-calendar-timezone-property.h \
 	gdav-creationdate-property.h \
+	gdav-date-property.h \
 	gdav-displayname-property.h \
 	gdav-getcontentlanguage-property.h \
 	gdav-getcontentlength-property.h \
@@ -80,6 +81,7 @@ libgdav_la_SOURCES = \
 	gdav-calendar-description-property.c \
 	gdav-calendar-timezone-property.c \
 	gdav-creationdate-property.c \
+	gdav-date-property.c \
 	gdav-displayname-property.c \
 	gdav-getcontentlanguage-property.c \
 	gdav-getcontentlength-property.c \

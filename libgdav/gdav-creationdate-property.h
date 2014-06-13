@@ -20,7 +20,7 @@
 #ifndef __GDAV_CREATIONDATE_PROPERTY_H__
 #define __GDAV_CREATIONDATE_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-date-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_CREATIONDATE_PROPERTY \
@@ -31,12 +31,12 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavCreationDateProperty;
-typedef GDavPropertyClass GDavCreationDatePropertyClass;
+typedef GDavDateProperty GDavCreationDateProperty;
+typedef GDavDatePropertyClass GDavCreationDatePropertyClass;
 
 GType		gdav_creationdate_property_get_type
 						(void) G_GNUC_CONST;
-GDavProperty *	gdav_creationdate_property_new	(GDateTime *prop_value);
+GDavProperty *	gdav_creationdate_property_new	(SoupDate *prop_value);
 
 G_END_DECLS
 

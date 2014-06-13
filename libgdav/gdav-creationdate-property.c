@@ -24,34 +24,32 @@
 G_DEFINE_TYPE (
 	GDavCreationDateProperty,
 	gdav_creationdate_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_DATE_PROPERTY)
 
 static void
-gdav_creationdate_property_class_init (GDavPropertyClass *class)
+gdav_creationdate_property_class_init (GDavDatePropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "creationdate";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
-
-	class->value_type = G_TYPE_DATE_TIME;
 }
 
 static void
-gdav_creationdate_property_init (GDavProperty *property)
+gdav_creationdate_property_init (GDavDateProperty *property)
 {
 }
 
 GDavProperty *
-gdav_creationdate_property_new (GDateTime *prop_value)
+gdav_creationdate_property_new (SoupDate *prop_value)
 {
 	GDavProperty *property;
 	GValue value = G_VALUE_INIT;
 
 	g_return_val_if_fail (prop_value != NULL, NULL);
 
-	g_value_init (&value, G_TYPE_DATE_TIME);
+	g_value_init (&value, SOUP_TYPE_DATE);
 	g_value_set_boxed (&value, prop_value);
 
 	property = g_object_new (

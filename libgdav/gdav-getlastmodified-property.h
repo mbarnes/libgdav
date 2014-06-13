@@ -20,7 +20,7 @@
 #ifndef __GDAV_GETLASTMODIFIED_PROPERTY_H__
 #define __GDAV_GETLASTMODIFIED_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-date-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_GETLASTMODIFIED_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavGetLastModifiedProperty;
-typedef GDavPropertyClass GDavGetLastModifiedPropertyClass;
+typedef GDavDateProperty GDavGetLastModifiedProperty;
+typedef GDavDatePropertyClass GDavGetLastModifiedPropertyClass;
 
 GType		gdav_getlastmodified_property_get_type
 						(void) G_GNUC_CONST;
