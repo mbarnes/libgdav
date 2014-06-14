@@ -129,7 +129,7 @@ gdav_property_set_serialize (GDavParsable *parsable,
 
 	for (link = list; link != NULL; link = g_list_next (link)) {
 		success = gdav_parsable_serialize (
-			parsable, namespaces, doc, node, error);
+			link->data, namespaces, doc, node, error);
 		if (!success)
 			break;
 	}
