@@ -23,6 +23,8 @@
 
 #include <glib/gi18n-lib.h>
 
+#include "gdav-utils.h"
+
 #define GDAV_RESPONSE_GET_PRIVATE(obj) \
 	(G_TYPE_INSTANCE_GET_PRIVATE \
 	((obj), GDAV_TYPE_RESPONSE, GDavResponsePrivate))
@@ -315,6 +317,32 @@ gdav_response_new_from_message (SoupMessage *message)
 	g_ptr_array_add (response->priv->hrefs, soup_uri_copy (uri));
 
 	return response;
+}
+
+gboolean
+gdav_response_has_errors (GDavResponse *response)
+{
+	guint ii, n_propstats;
+
+	g_return_val_if_fail (GDAV_IS_RESPONSE (response), FALSE);
+
+	if (GDAV_STATUS_IS_ERROR (response->priv->status_code))
+		return TRUE;
+
+	n_propstats = gdav_response_get_n_propstats (response);
+
+	for (ii = 0; ii < n_propstats; ii++) {
+		GDavPropStat *propstat;
+		guint status;
+
+		propstat = gdav_response_get_propstat (response, ii);
+		status = gdav_prop_stat_get_status (propstat, NULL);
+
+		if (GDAV_STATUS_IS_ERROR (status))
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 gboolean
