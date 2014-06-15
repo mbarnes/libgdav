@@ -211,6 +211,27 @@ gdav_multi_status_new_from_message (SoupMessage *message,
 	return multi_status;
 }
 
+gboolean
+gdav_multi_status_has_errors (GDavMultiStatus *multi_status)
+{
+	guint ii, n_responses;
+
+	g_return_val_if_fail (GDAV_IS_MULTI_STATUS (multi_status), FALSE);
+
+	n_responses = gdav_multi_status_get_n_responses (multi_status);
+
+	for (ii = 0; ii < n_responses; ii++) {
+		GDavResponse *response;
+
+		response = gdav_multi_status_get_response (multi_status, ii);
+
+		if (gdav_response_has_errors (response))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 GDavResponse *
 gdav_multi_status_get_response (GDavMultiStatus *multi_status,
                                 guint index)

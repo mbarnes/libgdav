@@ -63,6 +63,8 @@ GDavMultiStatus *
 		gdav_multi_status_new_from_message
 					(SoupMessage *message,
 					 GError **error);
+gboolean	gdav_multi_status_has_errors
+					(GDavMultiStatus *multi_status);
 GDavResponse *	gdav_multi_status_get_response
 					(GDavMultiStatus *multi_status,
 					 guint index);
