@@ -67,6 +67,25 @@ GDavMultiStatus *
 						 SoupMessage **out_message,
 						 GError **error);
 
+GDavMultiStatus *
+		gdav_proppatch_sync		(SoupSession *session,
+						 SoupURI *uri,
+						 GDavPropertyUpdate *update,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_proppatch			(SoupSession *session,
+						 SoupURI *uri,
+						 GDavPropertyUpdate *update,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+GDavMultiStatus *
+		gdav_proppatch_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
 G_END_DECLS
 
 #endif /* __GDAV_METHODS_H__ */

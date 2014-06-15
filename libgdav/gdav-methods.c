@@ -550,3 +550,155 @@ gdav_propfind_finish (SoupSession *session,
 	return g_task_propagate_pointer (G_TASK (result), error);
 }
 
+GDavMultiStatus *
+gdav_proppatch_sync (SoupSession *session,
+                     SoupURI *uri,
+                     GDavPropertyUpdate *update,
+                     SoupMessage **out_message,
+                     GCancellable *cancellable,
+                     GError **error)
+{
+	SoupRequestHTTP *request;
+	SoupMessage *message;
+	GDavMultiStatus *multi_status = NULL;
+
+	g_return_val_if_fail (SOUP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (uri != NULL, NULL);
+
+	request = gdav_request_proppatch_uri (session, uri, update, error);
+
+	if (request == NULL) {
+		if (out_message != NULL)
+			*out_message = NULL;
+		return NULL;
+	}
+
+	message = soup_request_http_get_message (request);
+
+	if (gdav_request_send_sync (request, cancellable, error)) {
+		multi_status = gdav_multi_status_new_from_message (
+			message, error);
+	}
+
+	/* SoupMessage is set even in case of error for uses
+	 * like calling soup_message_get_https_status() when
+	 * SSL/TLS negotiation fails. */
+	if (out_message != NULL)
+		*out_message = g_object_ref (message);
+
+	g_object_unref (message);
+	g_object_unref (request);
+
+	return multi_status;
+}
+
+static void
+gdav_proppatch_request_cb (GObject *source_object,
+                           GAsyncResult *result,
+                           gpointer user_data)
+{
+	SoupRequestHTTP *request;
+	SoupMessage *message;
+	GTask *task = G_TASK (user_data);
+	GDavMultiStatus *multi_status = NULL;
+	GError *local_error = NULL;
+
+	request = SOUP_REQUEST_HTTP (source_object);
+	message = soup_request_http_get_message (request);
+
+	if (gdav_request_send_finish (request, result, &local_error)) {
+		multi_status = gdav_multi_status_new_from_message (
+			message, &local_error);
+	}
+
+	/* Sanity check */
+	g_warn_if_fail (
+		((multi_status != NULL) && (local_error == NULL)) ||
+		((multi_status == NULL) && (local_error != NULL)));
+
+	if (multi_status != NULL)
+		g_task_return_pointer (task, multi_status, g_object_unref);
+	else
+		g_task_return_error (task, local_error);
+
+	g_object_unref (message);
+	g_object_unref (task);
+}
+
+void
+gdav_proppatch (SoupSession *session,
+                SoupURI *uri,
+                GDavPropertyUpdate *update,
+                GCancellable *cancellable,
+                GAsyncReadyCallback callback,
+                gpointer user_data)
+{
+	GTask *task;
+	SoupRequestHTTP *request;
+	TaskData *task_data;
+	GError *local_error = NULL;
+
+	g_return_if_fail (SOUP_IS_SESSION (session));
+	g_return_if_fail (uri != NULL);
+	g_return_if_fail (GDAV_IS_PROPERTY_UPDATE (update));
+
+	task_data = g_slice_new0 (TaskData);
+
+	task = g_task_new (session, cancellable, callback, user_data);
+	g_task_set_source_tag (task, gdav_proppatch);
+
+	g_task_set_task_data (
+		task, task_data, (GDestroyNotify) task_data_free);
+
+	request = gdav_request_proppatch_uri (
+		session, uri, update, &local_error);
+
+	/* Sanity check */
+	g_warn_if_fail (
+		((request != NULL) && (local_error == NULL)) ||
+		((request == NULL) && (local_error != NULL)));
+
+	if (request != NULL) {
+		task_data->message =
+			soup_request_http_get_message (request);
+
+		gdav_request_send (
+			request, cancellable,
+			gdav_proppatch_request_cb,
+			g_object_ref (task));
+
+		g_object_unref (request);
+	} else {
+		g_task_return_error (task, local_error);
+	}
+
+	g_object_unref (task);
+}
+
+GDavMultiStatus *
+gdav_proppatch_finish (SoupSession *session,
+                       GAsyncResult *result,
+                       SoupMessage **out_message,
+                       GError **error)
+{
+	TaskData *task_data;
+
+	g_return_val_if_fail (
+		g_task_is_valid (result, session), NULL);
+	g_return_val_if_fail (
+		g_async_result_is_tagged (result, gdav_proppatch), NULL);
+
+	task_data = g_task_get_task_data (G_TASK (result));
+
+	/* SoupMessage is set even in case of error for uses
+	 * like calling soup_message_get_https_status() when
+	 * SSL/TLS negotiation fails, though SoupMessage may
+	 * be NULL if the Request-URI was invalid. */
+	if (out_message != NULL) {
+		*out_message = task_data->message;
+		task_data->message = NULL;
+	}
+
+	return g_task_propagate_pointer (G_TASK (result), error);
+}
+
