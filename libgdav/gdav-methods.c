@@ -25,20 +25,20 @@
 
 #include "gdav-utils.h"
 
-typedef struct _AsyncContext AsyncContext;
+typedef struct _TaskData TaskData;
 
-struct _AsyncContext {
+struct _TaskData {
 	SoupMessage *message;
 	GDavAllow allow;
 	GDavOptions options;
 };
 
 static void
-async_context_free (AsyncContext *async_context)
+task_data_free (TaskData *task_data)
 {
-	g_clear_object (&async_context->message);
+	g_clear_object (&task_data->message);
 
-	g_slice_free (AsyncContext, async_context);
+	g_slice_free (TaskData, task_data);
 }
 
 static void
@@ -67,6 +67,51 @@ gdav_request_apply_response (SoupMessage *message,
 	}
 }
 
+static gboolean
+gdav_request_send_sync (SoupRequestHTTP *request,
+                        GCancellable *cancellable,
+                        GError **error)
+{
+	GInputStream *input_stream;
+	gboolean success = FALSE;
+
+	/* This is an internal wrapper for soup_request_send().
+	 * The input stream contents are written to the SoupMessage
+	 * response body to ensure a SoupLogger sees it. */
+
+	input_stream = soup_request_send (
+		SOUP_REQUEST (request), cancellable, error);
+
+	if (input_stream != NULL) {
+		GOutputStream *output_stream;
+		gssize n_bytes = -1;
+
+		output_stream = g_memory_output_stream_new_resizable ();
+
+		/* Don't close the input stream automatically,
+		 * we'll need to do some post-processing first. */
+		n_bytes = g_output_stream_splice (
+			output_stream, input_stream,
+			G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET,
+			cancellable, error);
+
+		if (n_bytes >= 0) {
+			SoupMessage *message;
+
+			message = soup_request_http_get_message (request);
+			gdav_request_apply_response (message, output_stream);
+			success = gdav_message_is_successful (message, error);
+			g_object_unref (message);
+		}
+
+		g_object_unref (output_stream);
+		g_object_unref (input_stream);
+	}
+
+	return success;
+}
+
+/* Helper for gdav_request_send() */
 static void
 gdav_request_splice_cb (GObject *source_object,
                         GAsyncResult *result,
@@ -88,17 +133,21 @@ gdav_request_splice_cb (GObject *source_object,
 
 	g_output_stream_splice_finish (output_stream, result, &local_error);
 
-	if (local_error != NULL) {
-		g_task_return_error (task, local_error);
-	} else {
+	if (local_error == NULL) {
 		gdav_request_apply_response (message, output_stream);
-		g_task_return_boolean (task, TRUE);
+		gdav_message_is_successful (message, &local_error);
 	}
+
+	if (local_error != NULL)
+		g_task_return_error (task, local_error);
+	else
+		g_task_return_boolean (task, TRUE);
 
 	g_object_unref (message);
 	g_object_unref (task);
 }
 
+/* Helper for gdav_request_send() */
 static void
 gdav_request_send_cb (GObject *source_object,
                       GAsyncResult *result,
@@ -180,77 +229,6 @@ gdav_request_send_finish (SoupRequestHTTP *request,
 	return g_task_propagate_boolean (G_TASK (result), error);
 }
 
-static gboolean
-gdav_request_send_sync (SoupRequestHTTP *request,
-                        GCancellable *cancellable,
-                        GError **error)
-{
-	GInputStream *input_stream;
-	gssize n_bytes = -1;
-
-	/* This is an internal wrapper for soup_request_send().
-	 * The input stream contents are written to the SoupMessage
-	 * response body to ensure a SoupLogger sees it. */
-
-	input_stream = soup_request_send (
-		SOUP_REQUEST (request), cancellable, error);
-
-	if (input_stream != NULL) {
-		GOutputStream *output_stream;
-
-		output_stream = g_memory_output_stream_new_resizable ();
-
-		/* Don't close the input stream automatically,
-		 * we'll need to do some post-processing first. */
-		n_bytes = g_output_stream_splice (
-			output_stream, input_stream,
-			G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET,
-			cancellable, error);
-
-		if (n_bytes >= 0) {
-			SoupMessage *message;
-
-			message = soup_request_http_get_message (request);
-			gdav_request_apply_response (message, output_stream);
-			g_object_unref (message);
-		}
-
-		g_object_unref (output_stream);
-		g_object_unref (input_stream);
-	}
-
-	return (n_bytes >= 0);
-}
-
-static GDavMultiStatus *
-gdav_parse_multi_status (SoupMessage *message,
-                         GError **error)
-{
-	SoupURI *base_uri;
-
-	g_return_val_if_fail (SOUP_IS_MESSAGE (message), NULL);
-
-	base_uri = soup_message_get_uri (message);
-
-	if (message->status_code != SOUP_STATUS_MULTI_STATUS) {
-		g_set_error (
-			error, GDAV_PARSABLE_ERROR,
-			GDAV_PARSABLE_ERROR_INTERNAL,
-			_("Expected status %u (%s), but got %u (%s)"),
-			SOUP_STATUS_MULTI_STATUS,
-			soup_status_get_phrase (SOUP_STATUS_MULTI_STATUS),
-			message->status_code,
-			message->reason_phrase);
-		return NULL;
-	}
-
-	return gdav_parsable_new_from_data (
-		GDAV_TYPE_MULTI_STATUS, base_uri,
-		message->response_body->data,
-		message->response_body->length,
-		error);
-}
-
 gboolean
 gdav_options_sync (SoupSession *session,
                    SoupURI *uri,
@@ -262,19 +240,23 @@ gdav_options_sync (SoupSession *session,
 {
 	SoupRequestHTTP *request;
 	SoupMessage *message;
-	gboolean success = FALSE;
+	gboolean success;
 
 	g_return_val_if_fail (SOUP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (uri != NULL, FALSE);
 
 	request = gdav_request_options_uri (session, uri, error);
 
-	if (request == NULL)
+	if (request == NULL) {
+		if (out_message != NULL)
+			*out_message = NULL;
 		return FALSE;
+	}
 
 	message = soup_request_http_get_message (request);
+	success = gdav_request_send_sync (request, cancellable, error);
 
-	if (gdav_request_send_sync (request, cancellable, error)) {
+	if (success) {
 		if (out_allow != NULL) {
 			*out_allow = gdav_allow_from_headers (
 				message->response_headers);
@@ -284,8 +266,6 @@ gdav_options_sync (SoupSession *session,
 			*out_options = gdav_options_from_headers (
 				message->response_headers);
 		}
-
-		success = TRUE;
 	}
 
 	/* SoupMessage is set even in case of error for uses
@@ -306,27 +286,28 @@ gdav_options_request_cb (GObject *source_object,
                          gpointer user_data)
 {
 	SoupRequestHTTP *request;
+	SoupMessage *message;
 	GTask *task = G_TASK (user_data);
-	AsyncContext *async_context;
+	TaskData *task_data;
 	GError *local_error = NULL;
 
 	request = SOUP_REQUEST_HTTP (source_object);
-	async_context = g_task_get_task_data (task);
+	message = soup_request_http_get_message (request);
+	task_data = g_task_get_task_data (task);
 
-	gdav_request_send_finish (request, result, &local_error);
-
-	if (local_error == NULL) {
-		async_context->allow =
+	if (gdav_request_send_finish (request, result, &local_error)) {
+		task_data->allow =
 			gdav_allow_from_headers (
-			async_context->message->response_headers);
-		async_context->options =
+			message->response_headers);
+		task_data->options =
 			gdav_options_from_headers (
-			async_context->message->response_headers);
+			message->response_headers);
 		g_task_return_boolean (task, TRUE);
 	} else {
 		g_task_return_error (task, local_error);
 	}
 
+	g_object_unref (message);
 	g_object_unref (task);
 }
 
@@ -339,19 +320,19 @@ gdav_options (SoupSession *session,
 {
 	GTask *task;
 	SoupRequestHTTP *request;
-	AsyncContext *async_context;
+	TaskData *task_data;
 	GError *local_error = NULL;
 
 	g_return_if_fail (SOUP_IS_SESSION (session));
 	g_return_if_fail (uri != NULL);
 
-	async_context = g_slice_new0 (AsyncContext);
+	task_data = g_slice_new0 (TaskData);
 
 	task = g_task_new (session, cancellable, callback, user_data);
 	g_task_set_source_tag (task, gdav_options);
 
 	g_task_set_task_data (
-		task, async_context, (GDestroyNotify) async_context_free);
+		task, task_data, (GDestroyNotify) task_data_free);
 
 	request = gdav_request_options_uri (session, uri, &local_error);
 
@@ -361,7 +342,7 @@ gdav_options (SoupSession *session,
 		((request == NULL) && (local_error != NULL)));
 
 	if (request != NULL) {
-		async_context->message =
+		task_data->message =
 			soup_request_http_get_message (request);
 
 		gdav_request_send (
@@ -385,20 +366,20 @@ gdav_options_finish (SoupSession *session,
                      SoupMessage **out_message,
                      GError **error)
 {
-	AsyncContext *async_context;
+	TaskData *task_data;
 
 	g_return_val_if_fail (
 		g_task_is_valid (result, session), FALSE);
 	g_return_val_if_fail (
 		g_async_result_is_tagged (result, gdav_options), FALSE);
 
-	async_context = g_task_get_task_data (G_TASK (result));
+	task_data = g_task_get_task_data (G_TASK (result));
 
 	if (!g_task_had_error (G_TASK (result))) {
 		if (out_allow != NULL)
-			*out_allow = async_context->allow;
+			*out_allow = task_data->allow;
 		if (out_options != NULL)
-			*out_options = async_context->options;
+			*out_options = task_data->options;
 	}
 
 	/* SoupMessage is set even in case of error for uses
@@ -406,8 +387,8 @@ gdav_options_finish (SoupSession *session,
 	 * SSL/TLS negotiation fails, though SoupMessage may
 	 * be NULL if the Request-URI was invalid. */
 	if (out_message != NULL) {
-		*out_message = async_context->message;
-		async_context->message = NULL;
+		*out_message = task_data->message;
+		task_data->message = NULL;
 	}
 
 	return g_task_propagate_boolean (G_TASK (result), error);
@@ -433,13 +414,18 @@ gdav_propfind_sync (SoupSession *session,
 	request = gdav_request_propfind_uri (
 		session, uri, type, prop, depth, error);
 
-	if (request == NULL)
+	if (request == NULL) {
+		if (out_message != NULL)
+			*out_message = NULL;
 		return NULL;
+	}
 
 	message = soup_request_http_get_message (request);
 
-	if (gdav_request_send_sync (request, cancellable, error))
-		multi_status = gdav_parse_multi_status (message, error);
+	if (gdav_request_send_sync (request, cancellable, error)) {
+		multi_status = gdav_multi_status_new_from_message (
+			message, error);
+	}
 
 	/* SoupMessage is set even in case of error for uses
 	 * like calling soup_message_get_https_status() when
@@ -461,31 +447,25 @@ gdav_propfind_request_cb (GObject *source_object,
 	SoupRequestHTTP *request;
 	SoupMessage *message;
 	GTask *task = G_TASK (user_data);
-	gpointer parsable;
+	GDavMultiStatus *multi_status;
 	GError *local_error = NULL;
 
 	request = SOUP_REQUEST_HTTP (source_object);
 	message = soup_request_http_get_message (request);
 
-	gdav_request_send_finish (request, result, &local_error);
-
-	if (local_error != NULL)
-		goto exit;
-
-	parsable = gdav_parse_multi_status (message, &local_error);
+	if (gdav_request_send_finish (request, result, &local_error)) {
+		multi_status = gdav_multi_status_new_from_message (
+			message, &local_error);
+	}
 
 	/* Sanity check */
 	g_warn_if_fail (
-		((parsable != NULL) && (local_error == NULL)) ||
-		((parsable == NULL) && (local_error != NULL)));
+		((multi_status != NULL) && (local_error == NULL)) ||
+		((multi_status == NULL) && (local_error != NULL)));
 
-	if (parsable != NULL) {
-		g_warn_if_fail (GDAV_IS_MULTI_STATUS (parsable));
-		g_task_return_pointer (task, parsable, g_object_unref);
-	}
-
-exit:
-	if (local_error != NULL)
+	if (multi_status != NULL)
+		g_task_return_pointer (task, multi_status, g_object_unref);
+	else
 		g_task_return_error (task, local_error);
 
 	g_object_unref (message);
@@ -504,19 +484,19 @@ gdav_propfind (SoupSession *session,
 {
 	GTask *task;
 	SoupRequestHTTP *request;
-	AsyncContext *async_context;
+	TaskData *task_data;
 	GError *local_error = NULL;
 
 	g_return_if_fail (SOUP_IS_SESSION (session));
 	g_return_if_fail (uri != NULL);
 
-	async_context = g_slice_new0 (AsyncContext);
+	task_data = g_slice_new0 (TaskData);
 
 	task = g_task_new (session, cancellable, callback, user_data);
 	g_task_set_source_tag (task, gdav_propfind);
 
 	g_task_set_task_data (
-		task, async_context, (GDestroyNotify) async_context_free);
+		task, task_data, (GDestroyNotify) task_data_free);
 
 	request = gdav_request_propfind_uri (
 		session, uri, type, prop, depth, &local_error);
@@ -527,7 +507,7 @@ gdav_propfind (SoupSession *session,
 		((request == NULL) && (local_error != NULL)));
 
 	if (request != NULL) {
-		async_context->message =
+		task_data->message =
 			soup_request_http_get_message (request);
 
 		gdav_request_send (
@@ -549,22 +529,22 @@ gdav_propfind_finish (SoupSession *session,
                       SoupMessage **out_message,
                       GError **error)
 {
-	AsyncContext *async_context;
+	TaskData *task_data;
 
 	g_return_val_if_fail (
 		g_task_is_valid (result, session), NULL);
 	g_return_val_if_fail (
-		g_async_result_is_tagged (result, gdav_propfind), FALSE);
+		g_async_result_is_tagged (result, gdav_propfind), NULL);
 
-	async_context = g_task_get_task_data (G_TASK (result));
+	task_data = g_task_get_task_data (G_TASK (result));
 
 	/* SoupMessage is set even in case of error for uses
 	 * like calling soup_message_get_https_status() when
 	 * SSL/TLS negotiation fails, though SoupMessage may
 	 * be NULL if the Request-URI was invalid. */
 	if (out_message != NULL) {
-		*out_message = async_context->message;
-		async_context->message = NULL;
+		*out_message = task_data->message;
+		task_data->message = NULL;
 	}
 
 	return g_task_propagate_pointer (G_TASK (result), error);
