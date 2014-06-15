@@ -184,6 +184,33 @@ gdav_multi_status_init (GDavMultiStatus *multi_status)
 		g_ptr_array_new_with_free_func (g_object_unref);
 }
 
+GDavMultiStatus *
+gdav_multi_status_new_from_message (SoupMessage *message,
+                                    GError **error)
+{
+	GDavMultiStatus *multi_status;
+
+	g_return_val_if_fail (SOUP_IS_MESSAGE (message), NULL);
+
+	if (message->status_code == SOUP_STATUS_MULTI_STATUS) {
+		multi_status = gdav_parsable_new_from_data (
+			GDAV_TYPE_MULTI_STATUS,
+			soup_message_get_uri (message),
+			message->response_body->data,
+			message->response_body->length,
+			error);
+	} else {
+		GDavResponse *response;
+
+		multi_status = g_object_new (GDAV_TYPE_MULTI_STATUS, NULL);
+
+		response = gdav_response_new_from_message (message);
+		g_ptr_array_add (multi_status->priv->responses, response);
+	}
+
+	return multi_status;
+}
+
 GDavResponse *
 gdav_multi_status_get_response (GDavMultiStatus *multi_status,
                                 guint index)

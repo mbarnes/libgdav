@@ -59,6 +59,10 @@ struct _GDavMultiStatusClass {
 
 GType		gdav_multi_status_get_type
 					(void) G_GNUC_CONST;
+GDavMultiStatus *
+		gdav_multi_status_new_from_message
+					(SoupMessage *message,
+					 GError **error);
 GDavResponse *	gdav_multi_status_get_response
 					(GDavMultiStatus *multi_status,
 					 guint index);
