@@ -24,6 +24,11 @@
 #include <libsoup/soup.h>
 #include <libgdav/gdav-enums.h>
 
+#define GDAV_STATUS_IS_ERROR(status) \
+	(SOUP_STATUS_IS_TRANSPORT_ERROR (status) || \
+	 SOUP_STATUS_IS_CLIENT_ERROR (status) || \
+	 SOUP_STATUS_IS_SERVER_ERROR (status))
+
 G_BEGIN_DECLS
 
 GDavAllow	gdav_allow_from_headers		(SoupMessageHeaders *headers);
