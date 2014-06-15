@@ -297,6 +297,26 @@ gdav_response_init (GDavResponse *response)
 		(GDestroyNotify) g_object_unref);
 }
 
+GDavResponse *
+gdav_response_new_from_message (SoupMessage *message)
+{
+	GDavResponse *response;
+	const gchar *reason_phrase;
+	SoupURI *uri;
+
+	g_return_val_if_fail (SOUP_IS_MESSAGE (message), NULL);
+
+	uri = soup_message_get_uri (message);
+	reason_phrase = soup_status_get_phrase (message->status_code);
+
+	response = g_object_new (GDAV_TYPE_RESPONSE, NULL);
+	response->priv->status_code = message->status_code;
+	response->priv->reason_phrase = g_strdup (reason_phrase);
+	g_ptr_array_add (response->priv->hrefs, soup_uri_copy (uri));
+
+	return response;
+}
+
 gboolean
 gdav_response_has_href (GDavResponse *response,
                         SoupURI *uri)
