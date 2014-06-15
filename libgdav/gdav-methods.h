@@ -101,6 +101,21 @@ gboolean	gdav_mkcol_finish		(SoupSession *session,
 						 SoupMessage **out_message,
 						 GError **error);
 
+gboolean	gdav_delete_sync		(SoupSession *session,
+						 SoupURI *uri,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_delete			(SoupSession *session,
+						 SoupURI *uri,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+gboolean	gdav_delete_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
 G_END_DECLS
 
 #endif /* __GDAV_METHODS_H__ */
