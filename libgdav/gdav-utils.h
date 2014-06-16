@@ -34,6 +34,8 @@ G_BEGIN_DECLS
 GDavAllow	gdav_allow_from_headers		(SoupMessageHeaders *headers);
 GDavOptions	gdav_options_from_headers	(SoupMessageHeaders *headers);
 
+gboolean	gdav_message_is_successful	(SoupMessage *message,
+						 GError **error);
 gboolean	gdav_error_missing_content	(xmlNode *element,
 						 GError **error);
 gboolean	gdav_error_unknown_content	(xmlNode *element,

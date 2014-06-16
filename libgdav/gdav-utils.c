@@ -25,6 +25,40 @@
 
 #include "gdav-parsable.h"
 
+static gpointer
+init_multi_status_is_error (gpointer unused)
+{
+	GHashTable *hash_table;
+
+	hash_table = g_hash_table_new (NULL, NULL);
+
+	/* A 207 Multi-Status response for these
+	 * methods indicates a partial failure. */
+
+	g_hash_table_add (hash_table, (gpointer) SOUP_METHOD_DELETE);
+	g_hash_table_add (hash_table, (gpointer) SOUP_METHOD_COPY);
+	g_hash_table_add (hash_table, (gpointer) SOUP_METHOD_MOVE);
+	g_hash_table_add (hash_table, (gpointer) SOUP_METHOD_LOCK);
+
+	return hash_table;
+}
+
+static gboolean
+multi_status_is_error (const gchar *method)
+{
+	static GOnce multi_status_is_error = G_ONCE_INIT;
+
+	g_return_val_if_fail (method != NULL, FALSE);
+
+	/* Note, the method string must be the canonical representation
+	 * by way of g_intern_string().  SoupMessage's method string is
+	 * already canonicalized. */
+
+	g_once (&multi_status_is_error, init_multi_status_is_error, NULL);
+
+	return g_hash_table_contains (multi_status_is_error.retval, method);
+}
+
 GDavAllow
 gdav_allow_from_headers (SoupMessageHeaders *headers)
 {
@@ -131,6 +165,46 @@ gdav_options_from_headers (SoupMessageHeaders *headers)
 	}
 
 	return options;
+}
+
+gboolean
+gdav_message_is_successful (SoupMessage *message,
+                            GError **error)
+{
+	guint status_code;
+	gboolean success;
+
+	g_return_val_if_fail (SOUP_IS_MESSAGE (message), FALSE);
+
+	/* XXX This doesn't take into account informational (1xx)
+	 *     status codes, but I think libsoup handles those
+	 *     automatically so it shouldn't be an issue. */
+
+	status_code = message->status_code;
+	success = SOUP_STATUS_IS_SUCCESSFUL (status_code);
+
+	/* For certain methods a 207 Multi-Status response indicates
+	 * a partial failure, which this function treats as an error. */
+	if (status_code == SOUP_STATUS_MULTI_STATUS) {
+		if (multi_status_is_error (message->method))
+			success = FALSE;
+	}
+
+	if (!success) {
+		const gchar *reason_phrase;
+
+		/* XXX Does libsoup already ensure this is set? */
+		if (message->reason_phrase != NULL)
+			reason_phrase = message->reason_phrase;
+		else
+			reason_phrase = soup_status_get_phrase (status_code);
+
+		g_set_error (
+			error, SOUP_HTTP_ERROR, status_code,
+			"%d %s", status_code, reason_phrase);
+	}
+
+	return success;
 }
 
 static gchar *
