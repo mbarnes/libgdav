@@ -139,7 +139,7 @@ set_path (GlobalState *state,
 }
 
 static gboolean
-yesno ()
+yesno (void)
 {
 	gchar buf[128];
 	gint len = 0;

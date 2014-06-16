@@ -82,10 +82,8 @@ gdav_resourcetype_property_deserialize (GDavParsable *parsable,
                                         xmlNode *node,
                                         GError **error)
 {
-	GArray *array;
 	GDavResourceType resource_type;
 	GValue value = G_VALUE_INIT;
-	xmlNode *child;
 	gint ii;
 
 	if (node->ns == NULL)
@@ -115,7 +113,7 @@ gdav_resourcetype_property_deserialize (GDavParsable *parsable,
 
 chainup:
 	/* Chain up to parent's deserialize() method. */
-	GDAV_PARSABLE_CLASS (gdav_resourcetype_property_parent_class)->
+	return GDAV_PARSABLE_CLASS (gdav_resourcetype_property_parent_class)->
 		deserialize (parsable, base_uri, doc, node, error);
 }
 

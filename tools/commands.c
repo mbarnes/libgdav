@@ -26,6 +26,7 @@
 #include <sys/wait.h>
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "enumtypes.h"
 #include "utils.h"

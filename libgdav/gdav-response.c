@@ -262,7 +262,6 @@ gdav_response_collect_types (GDavParsable *parsable,
                              GHashTable *parsable_types)
 {
 	GDavResponsePrivate *priv;
-	guint ii;
 
 	priv = GDAV_RESPONSE_GET_PRIVATE (parsable);
 

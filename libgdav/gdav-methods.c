@@ -91,7 +91,6 @@ gdav_request_send_cb (GObject *source_object,
                       gpointer user_data)
 {
 	GInputStream *input_stream;
-	GOutputStream *output_stream;
 	GTask *task = G_TASK (user_data);
 	GError *local_error = NULL;
 

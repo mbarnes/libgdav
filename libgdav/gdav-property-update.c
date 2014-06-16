@@ -107,6 +107,7 @@ gdav_property_update_class_init (GDavPropertyUpdateClass *class)
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "propertyupdate";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
+	parsable_class->collect_types = gdav_property_update_collect_types;
 }
 
 static void

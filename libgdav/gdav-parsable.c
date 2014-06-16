@@ -46,6 +46,7 @@ gdav_parsable_real_deserialize (GDavParsable *parsable,
                                 GError **error)
 {
 	/* FIXME Store off unhandled xmlNode. */
+	return TRUE;
 }
 
 static void

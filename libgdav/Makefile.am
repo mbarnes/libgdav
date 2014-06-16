@@ -23,11 +23,13 @@ BUILT_SOURCES = $(ENUM_GENERATED)
 lib_LTLIBRARIES = libgdav.la
 
 libgdav_la_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"libgdav\" \
 	$(NULL)
 
 libgdav_la_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML2_CFLAGS) \
 	$(GIO_CFLAGS) \

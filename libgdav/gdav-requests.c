@@ -37,13 +37,12 @@
 static xmlNs *
 gdav_nsdav_new (xmlNode *root)
 {
-	xmlNs *ns;
 	const gchar *prefix;
 
 	prefix = gdav_get_xmlns_prefix (GDAV_XMLNS_DAV);
 	g_warn_if_fail (prefix != NULL);
 
-	return xmlNewNs (root, GDAV_XMLNS_DAV, prefix);
+	return xmlNewNs (root, BAD_CAST GDAV_XMLNS_DAV, BAD_CAST prefix);
 }
 
 static GHashTable *
@@ -90,7 +89,7 @@ gdav_maybe_add_namespace (GHashTable *namespaces,
 		return;
 	}
 
-	ns = xmlNewNs (root, ns_href, ns_prefix);
+	ns = xmlNewNs (root, BAD_CAST ns_href, BAD_CAST ns_prefix);
 	g_hash_table_replace (namespaces, (gpointer) ns->href, ns);
 }
 
@@ -705,21 +704,19 @@ gdav_request_move_uri (SoupSession *session,
 	return request;
 }
 
-static gboolean
+static void
 gdav_init_lock_request (SoupRequestHTTP *request,
                         GDavLockScope lock_scope,
                         GDavLockType lock_type,
                         GDavLockFlags flags,
                         const gchar *owner,
-                        gint timeout,
-                        GError **error)
+                        gint timeout)
 {
 	SoupMessage *message;
 	xmlDoc *doc;
 	xmlNode *root;   /* depth=0 */
 	xmlNode *node1;  /* depth=1 */
 	xmlNs *nsdav;
-	gboolean success;
 
 	gdav_init_basic_request (request);
 
@@ -762,10 +759,10 @@ gdav_init_lock_request (SoupRequestHTTP *request,
 
 		if (uri != NULL) {
 			node1 = xmlNewTextChild (root, nsdav, XC_OWNER, NULL);
-			xmlNewTextChild (node1, nsdav, XC_HREF, owner);
+			xmlNewTextChild (node1, nsdav, XC_HREF, BAD_CAST owner);
 			soup_uri_free (uri);
 		} else {
-			node1 = xmlNewTextChild (root, nsdav, XC_OWNER, owner);
+			xmlNewTextChild (root, nsdav, XC_OWNER, BAD_CAST owner);
 		}
 	}
 
@@ -774,8 +771,6 @@ gdav_init_lock_request (SoupRequestHTTP *request,
 	xmlFreeDoc (doc);
 
 	g_object_unref (message);
-
-	return success;
 }
 
 SoupRequestHTTP *
@@ -797,10 +792,9 @@ gdav_request_lock (SoupSession *session,
 		session, SOUP_METHOD_LOCK, uri_string, error);
 
 	if (request != NULL) {
-		if (!gdav_init_lock_request (
+		gdav_init_lock_request (
 			request, lock_scope, lock_type,
-			flags, owner, timeout, error))
-			g_clear_object (&request);
+			flags, owner, timeout);
 	}
 
 	return request;
@@ -825,10 +819,9 @@ gdav_request_lock_uri (SoupSession *session,
 		session, SOUP_METHOD_LOCK, uri, error);
 
 	if (request != NULL) {
-		if (!gdav_init_lock_request (
+		gdav_init_lock_request (
 			request, lock_scope, lock_type,
-			flags, owner, timeout, error))
-			g_clear_object (&request);
+			flags, owner, timeout);
 	}
 
 	return request;

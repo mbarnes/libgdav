@@ -23,12 +23,14 @@ BUILT_SOURCES = $(ENUM_GENERATED)
 bin_PROGRAMS = gdav
 
 gdav_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
 	-I$(top_srcdir) \
 	-DG_LOG_DOMAIN=\"gdav\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	$(NULL)
 
 gdav_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(LIBEDIT_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML2_CFLAGS) \

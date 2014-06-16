@@ -171,10 +171,7 @@ gdav_property_set_deserialize (GDavParsable *parsable,
                                xmlNode *node,
                                GError **error)
 {
-	GDavPropertySetPrivate *priv;
 	GType type;
-
-	priv = GDAV_PROPERTY_SET_GET_PRIVATE (parsable);
 
 	/* Be lenient about unrecognized properties. */
 	type = gdav_parsable_lookup_type (node, NULL);
@@ -196,7 +193,7 @@ gdav_property_set_deserialize (GDavParsable *parsable,
 	}
 
 	/* Chain up to parent's deserialize() method. */
-	GDAV_PARSABLE_CLASS (gdav_property_set_parent_class)->
+	return GDAV_PARSABLE_CLASS (gdav_property_set_parent_class)->
 		deserialize (parsable, base_uri, doc, node, error);
 }
 
