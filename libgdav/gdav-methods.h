@@ -20,6 +20,7 @@
 #ifndef __GDAV_METHODS_H__
 #define __GDAV_METHODS_H__
 
+#include <libgdav/gdav-lockdiscovery-property.h>
 #include <libgdav/gdav-multi-status.h>
 #include <libgdav/gdav-requests.h>
 
@@ -150,6 +151,54 @@ void		gdav_move			(SoupSession *session,
 						 GAsyncReadyCallback callback,
 						 gpointer user_data);
 gboolean	gdav_move_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
+GDavLockDiscoveryProperty *
+		gdav_lock_sync			(SoupSession *session,
+						 SoupURI *uri,
+						 GDavLockScope lock_scope,
+						 GDavLockType lock_type,
+						 GDavLockFlags flags,
+						 const gchar *owner,
+						 gint timeout,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_lock			(SoupSession *session,
+						 SoupURI *uri,
+						 GDavLockScope lock_scope,
+						 GDavLockType lock_type,
+						 GDavLockFlags flags,
+						 const gchar *owner,
+						 gint timeout,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+GDavLockDiscoveryProperty *
+		gdav_lock_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
+GDavLockDiscoveryProperty *
+		gdav_lock_refresh_sync		(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *lock_token,
+						 gint timeout,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_lock_refresh		(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *lock_token,
+						 gint timeout,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+GDavLockDiscoveryProperty *
+		gdav_lock_refresh_finish	(SoupSession *session,
 						 GAsyncResult *result,
 						 SoupMessage **out_message,
 						 GError **error);
