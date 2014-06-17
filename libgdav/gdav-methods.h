@@ -116,6 +116,25 @@ gboolean	gdav_delete_finish		(SoupSession *session,
 						 SoupMessage **out_message,
 						 GError **error);
 
+gboolean	gdav_copy_sync			(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *destination,
+						 GDavCopyFlags flags,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_copy			(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *destination,
+						 GDavCopyFlags flags,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+gboolean	gdav_copy_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
 G_END_DECLS
 
 #endif /* __GDAV_METHODS_H__ */
