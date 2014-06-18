@@ -203,6 +203,23 @@ GDavLockDiscoveryProperty *
 						 SoupMessage **out_message,
 						 GError **error);
 
+gboolean	gdav_unlock_sync		(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *lock_token,
+						 SoupMessage **out_message,
+						 GCancellable *cancellable,
+						 GError **error);
+void		gdav_unlock			(SoupSession *session,
+						 SoupURI *uri,
+						 const gchar *lock_token,
+						 GCancellable *cancellable,
+						 GAsyncReadyCallback callback,
+						 gpointer user_data);
+gboolean	gdav_unlock_finish		(SoupSession *session,
+						 GAsyncResult *result,
+						 SoupMessage **out_message,
+						 GError **error);
+
 G_END_DECLS
 
 #endif /* __GDAV_METHODS_H__ */
