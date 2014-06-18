@@ -37,6 +37,7 @@ GDavResourceType
 		get_resource_type		(SoupSession *session,
 						 SoupURI *uri,
 						 GError **error);
+GType		get_property_type		(const gchar *prop_name);
 
 gboolean	get_resource_list		(SoupSession *session,
 						 SoupURI *uri,

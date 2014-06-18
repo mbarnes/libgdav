@@ -271,6 +271,89 @@ get_resource_type (SoupSession *session,
 	return resource_type;
 }
 
+/* Helper for get_property_type() */
+static GType
+get_property_type_rec (GType parent_type,
+                       const gchar *element_name,
+                       const gchar *element_namespace)
+{
+	GType *children;
+	guint n_children, ii;
+	GType type = G_TYPE_INVALID;
+
+	children = g_type_children (parent_type, &n_children);
+
+	for (ii = 0; ii < n_children; ii++) {
+		GDavParsableClass *class;
+		GType child_type;
+		gboolean match = FALSE;
+
+		child_type = children[ii];
+
+		/* Recurse over the child's children. */
+		type = get_property_type_rec (
+			child_type, element_name, element_namespace);
+
+		if (type != G_TYPE_INVALID)
+			break;
+
+		if (G_TYPE_IS_ABSTRACT (child_type))
+			continue;
+
+		class = g_type_class_ref (child_type);
+
+		/* element_namespace can be NULL. */
+		match = (class->element_name != NULL) &&
+			(class->element_namespace != NULL) &&
+			g_str_equal (element_name, class->element_name) &&
+			(element_namespace == NULL ||
+			 g_str_equal (
+				element_namespace,
+				class->element_namespace));
+
+		g_type_class_unref (class);
+
+		if (match) {
+			type = child_type;
+			break;
+		}
+	}
+
+	g_free (children);
+
+	return type;
+}
+
+GType
+get_property_type (const gchar *prop_name)
+{
+	const gchar *colon;
+	const gchar *xmlns = NULL;
+
+	g_return_val_if_fail (prop_name != NULL, 0);
+
+	colon = strchr (prop_name, ':');
+	if (colon != NULL) {
+		gchar *xmlns_prefix;
+
+		xmlns_prefix = g_strndup (prop_name, colon - prop_name);
+		prop_name = colon + 1;
+
+		xmlns = gdav_xmlns_from_prefix (xmlns_prefix);
+
+		g_free (xmlns_prefix);
+
+		/* Return invalid for an unknown prefix. */
+		if (xmlns == NULL)
+			return G_TYPE_INVALID;
+	}
+
+	/* XXX We could almost use gdav_parsable_lookup_type() except that
+	 *     requires a namespace and we want to try to cope without one.
+	 *     Also I don't want to deal with xmlNode from here. */
+	return get_property_type_rec (GDAV_TYPE_PROPERTY, prop_name, xmlns);
+}
+
 static gint
 compare_resources (gconstpointer a,
                    gconstpointer b,
