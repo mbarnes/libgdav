@@ -35,6 +35,7 @@ void		gdav_set_xmlns_prefix		(const gchar *xmlns_href,
 						 const gchar *xmlns_prefix);
 gboolean	gdav_is_xmlns			(xmlNode *node,
 						 const gchar *xmlns_href);
+const gchar *	gdav_xmlns_from_prefix		(const gchar *xmlns_prefix);
 
 G_END_DECLS
 

@@ -96,3 +96,30 @@ gdav_is_xmlns (xmlNode *node,
 	return (node != NULL && node->ns != NULL &&
 		xmlStrcmp (node->ns->href, BAD_CAST xmlns_href) == 0);
 }
+
+const gchar *
+gdav_xmlns_from_prefix (const gchar *xmlns_prefix)
+{
+	GHashTableIter iter;
+	const gchar *xmlns = NULL;
+	gpointer key, value;
+
+	g_return_val_if_fail (xmlns_prefix != NULL, NULL);
+
+	xmlns_prefix = g_intern_string (xmlns_prefix);
+
+	G_LOCK (gdav_xmlns_prefixes);
+
+	g_hash_table_iter_init (&iter, gdav_xmlns_prefixes.retval);
+
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		if (xmlns_prefix == (gchar *) value) {
+			xmlns = key;
+			break;
+		}
+	}
+
+	G_UNLOCK (gdav_xmlns_prefixes);
+
+	return xmlns;
+}
