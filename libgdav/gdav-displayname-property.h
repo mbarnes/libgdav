@@ -20,7 +20,7 @@
 #ifndef __GDAV_DISPLAYNAME_PROPERTY_H__
 #define __GDAV_DISPLAYNAME_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_DISPLAYNAME_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavDisplayNameProperty;
-typedef GDavPropertyClass GDavDisplayNamePropertyClass;
+typedef GDavPCDataProperty GDavDisplayNameProperty;
+typedef GDavPCDataPropertyClass GDavDisplayNamePropertyClass;
 
 GType		gdav_displayname_property_get_type
 						(void) G_GNUC_CONST;

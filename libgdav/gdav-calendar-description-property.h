@@ -20,7 +20,7 @@
 #ifndef __GDAV_CALENDAR_DESCRIPTION_PROPERTY_H__
 #define __GDAV_CALENDAR_DESCRIPTION_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_CALENDAR_DESCRIPTION_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavCalendarDescriptionProperty;
-typedef GDavPropertyClass GDavCalendarDescriptionPropertyClass;
+typedef GDavPCDataProperty GDavCalendarDescriptionProperty;
+typedef GDavPCDataPropertyClass GDavCalendarDescriptionPropertyClass;
 
 GType		gdav_calendar_description_property_get_type
 						(void) G_GNUC_CONST;

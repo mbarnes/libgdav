@@ -58,6 +58,7 @@ libgdav_headers = \
 	gdav-methods.h \
 	gdav-multi-status.h \
 	gdav-parsable.h \
+	gdav-pcdata-property.h \
 	gdav-prop-stat.h \
 	gdav-property.h \
 	gdav-property-set.h \
@@ -92,6 +93,7 @@ libgdav_la_SOURCES = \
 	gdav-methods.c \
 	gdav-multi-status.c \
 	gdav-parsable.c \
+	gdav-pcdata-property.c \
 	gdav-prop-stat.c \
 	gdav-property.c \
 	gdav-property-set.c \

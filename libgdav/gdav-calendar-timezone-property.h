@@ -20,7 +20,7 @@
 #ifndef __GDAV_CALENDAR_TIMEZONE_PROPERTY_H__
 #define __GDAV_CALENDAR_TIMEZONE_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_CALENDAR_TIMEZONE_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavCalendarTimeZoneProperty;
-typedef GDavPropertyClass GDavCalendarTimeZonePropertyClass;
+typedef GDavPCDataProperty GDavCalendarTimeZoneProperty;
+typedef GDavPCDataPropertyClass GDavCalendarTimeZonePropertyClass;
 
 GType		gdav_calendar_timezone_property_get_type
 						(void) G_GNUC_CONST;

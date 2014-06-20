@@ -24,22 +24,20 @@
 G_DEFINE_TYPE (
 	GDavGetContentLanguageProperty,
 	gdav_getcontentlanguage_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_PCDATA_PROPERTY)
 
 static void
-gdav_getcontentlanguage_property_class_init (GDavPropertyClass *class)
+gdav_getcontentlanguage_property_class_init (GDavPCDataPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "getcontentlanguage";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
-
-	class->value_type = G_TYPE_STRING;
 }
 
 static void
-gdav_getcontentlanguage_property_init (GDavProperty *property)
+gdav_getcontentlanguage_property_init (GDavPCDataProperty *property)
 {
 }
 

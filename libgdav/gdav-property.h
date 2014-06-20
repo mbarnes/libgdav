@@ -56,11 +56,6 @@ struct _GDavPropertyClass {
 	GDavParsableClass parent_class;
 
 	GType value_type;
-
-	gboolean	(*parse_data)		(GDavProperty *property,
-						 const gchar *data,
-						 GValue *result,
-						 GError **error);
 };
 
 GType		gdav_property_get_type		(void) G_GNUC_CONST;

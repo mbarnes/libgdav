@@ -30,6 +30,7 @@
 #include <libgdav/gdav-methods.h>
 #include <libgdav/gdav-multi-status.h>
 #include <libgdav/gdav-parsable.h>
+#include <libgdav/gdav-pcdata-property.h>
 #include <libgdav/gdav-prop-stat.h>
 #include <libgdav/gdav-property.h>
 #include <libgdav/gdav-property-set.h>

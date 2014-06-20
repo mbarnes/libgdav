@@ -20,7 +20,7 @@
 #ifndef __GDAV_GETETAG_PROPERTY_H__
 #define __GDAV_GETETAG_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_GETETAG_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavGetETagProperty;
-typedef GDavPropertyClass GDavGetETagPropertyClass;
+typedef GDavPCDataProperty GDavGetETagProperty;
+typedef GDavPCDataPropertyClass GDavGetETagPropertyClass;
 
 GType		gdav_getetag_property_get_type	(void) G_GNUC_CONST;
 GDavProperty *	gdav_getetag_property_new	(const gchar *prop_value);

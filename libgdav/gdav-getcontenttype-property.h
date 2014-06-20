@@ -20,7 +20,7 @@
 #ifndef __GDAV_GETCONTENTTYPE_PROPERTY_H__
 #define __GDAV_GETCONTENTTYPE_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTTYPE_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavGetContentTypeProperty;
-typedef GDavPropertyClass GDavGetContentTypePropertyClass;
+typedef GDavPCDataProperty GDavGetContentTypeProperty;
+typedef GDavPCDataPropertyClass GDavGetContentTypePropertyClass;
 
 GType		gdav_getcontenttype_property_get_type
 						(void) G_GNUC_CONST;

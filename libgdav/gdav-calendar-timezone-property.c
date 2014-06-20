@@ -24,22 +24,20 @@
 G_DEFINE_TYPE (
 	GDavCalendarTimeZoneProperty,
 	gdav_calendar_timezone_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_PCDATA_PROPERTY)
 
 static void
-gdav_calendar_timezone_property_class_init (GDavPropertyClass *class)
+gdav_calendar_timezone_property_class_init (GDavPCDataPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "calendar-timezone";
 	parsable_class->element_namespace = GDAV_XMLNS_CALDAV;
-
-	class->value_type = G_TYPE_STRING;
 }
 
 static void
-gdav_calendar_timezone_property_init (GDavProperty *property)
+gdav_calendar_timezone_property_init (GDavPCDataProperty *property)
 {
 }
 

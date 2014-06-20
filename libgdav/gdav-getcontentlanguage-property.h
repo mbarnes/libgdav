@@ -20,7 +20,7 @@
 #ifndef __GDAV_GETCONTENTLANGUAGE_PROPERTY_H__
 #define __GDAV_GETCONTENTLANGUAGE_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-pcdata-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTLANGUAGE_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavGetContentLanguageProperty;
-typedef GDavPropertyClass GDavGetContentLanguagePropertyClass;
+typedef GDavPCDataProperty GDavGetContentLanguageProperty;
+typedef GDavPCDataPropertyClass GDavGetContentLanguagePropertyClass;
 
 GType		gdav_getcontentlanguage_property_get_type
 						(void) G_GNUC_CONST;
