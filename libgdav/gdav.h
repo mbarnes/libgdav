@@ -44,6 +44,7 @@
 #include <libgdav/gdav-utils.h>
 
 /* DAV Properties */
+#include <libgdav/gdav-alternate-uri-set-property.h>
 #include <libgdav/gdav-creationdate-property.h>
 #include <libgdav/gdav-displayname-property.h>
 #include <libgdav/gdav-getcontentlanguage-property.h>
@@ -51,7 +52,11 @@
 #include <libgdav/gdav-getcontenttype-property.h>
 #include <libgdav/gdav-getetag-property.h>
 #include <libgdav/gdav-getlastmodified-property.h>
+#include <libgdav/gdav-group-member-set-property.h>
+#include <libgdav/gdav-group-membership-property.h>
 #include <libgdav/gdav-lockdiscovery-property.h>
+#include <libgdav/gdav-owner-property.h>
+#include <libgdav/gdav-principal-url-property.h>
 #include <libgdav/gdav-resourcetype-property.h>
 #include <libgdav/gdav-supportedlock-property.h>
 

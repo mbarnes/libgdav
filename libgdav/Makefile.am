@@ -40,19 +40,22 @@ libgdavincludedir = $(pkgincludedir)/libgdav
 libgdav_headers = \
 	gdav.h \
 	gdav-active-lock.h \
+	gdav-alternate-uri-set-property.h \
 	gdav-calendar-description-property.h \
 	gdav-calendar-timezone-property.h \
 	gdav-creationdate-property.h \
 	gdav-date-property.h \
 	gdav-displayname-property.h \
+	gdav-enums.h \
+	gdav-enumtypes.h \
+	gdav-error.h \
 	gdav-getcontentlanguage-property.h \
 	gdav-getcontentlength-property.h \
 	gdav-getcontenttype-property.h \
 	gdav-getetag-property.h \
 	gdav-getlastmodified-property.h \
-	gdav-enums.h \
-	gdav-enumtypes.h \
-	gdav-error.h \
+	gdav-group-member-set-property.h \
+	gdav-group-membership-property.h \
 	gdav-href-property.h \
 	gdav-list-property.h \
 	gdav-lock-entry.h \
@@ -60,8 +63,10 @@ libgdav_headers = \
 	gdav-max-resource-size-property.h \
 	gdav-methods.h \
 	gdav-multi-status.h \
+	gdav-owner-property.h \
 	gdav-parsable.h \
 	gdav-pcdata-property.h \
+	gdav-principal-url-property.h \
 	gdav-prop-stat.h \
 	gdav-property.h \
 	gdav-property-set.h \
@@ -83,17 +88,20 @@ libgdav_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	$(libgdav_headers) \
 	gdav-active-lock.c \
+	gdav-alternate-uri-set-property.c \
 	gdav-calendar-description-property.c \
 	gdav-calendar-timezone-property.c \
 	gdav-creationdate-property.c \
 	gdav-date-property.c \
 	gdav-displayname-property.c \
+	gdav-error.c \
 	gdav-getcontentlanguage-property.c \
 	gdav-getcontentlength-property.c \
 	gdav-getcontenttype-property.c \
 	gdav-getetag-property.c \
 	gdav-getlastmodified-property.c \
-	gdav-error.c \
+	gdav-group-member-set-property.c \
+	gdav-group-membership-property.c \
 	gdav-href-property.c \
 	gdav-list-property.c \
 	gdav-lock-entry.c \
@@ -101,8 +109,10 @@ libgdav_la_SOURCES = \
 	gdav-max-resource-size-property.c \
 	gdav-methods.c \
 	gdav-multi-status.c \
+	gdav-owner-property.c \
 	gdav-parsable.c \
 	gdav-pcdata-property.c \
+	gdav-principal-url-property.c \
 	gdav-prop-stat.c \
 	gdav-property.c \
 	gdav-property-set.c \

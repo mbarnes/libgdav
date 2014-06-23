@@ -79,6 +79,7 @@ gdav_parsable_class_init (GDavParsableClass *class)
 	g_type_ensure (GDAV_TYPE_RESPONSE);
 
 	/* Properties */
+	g_type_ensure (GDAV_TYPE_ALTERNATE_URI_SET_PROPERTY);
 	g_type_ensure (GDAV_TYPE_CALENDAR_DESCRIPTION_PROPERTY);
 	g_type_ensure (GDAV_TYPE_CALENDAR_TIMEZONE_PROPERTY);
 	g_type_ensure (GDAV_TYPE_CREATIONDATE_PROPERTY);
@@ -87,8 +88,12 @@ gdav_parsable_class_init (GDavParsableClass *class)
 	g_type_ensure (GDAV_TYPE_GETCONTENTLENGTH_PROPERTY);
 	g_type_ensure (GDAV_TYPE_GETETAG_PROPERTY);
 	g_type_ensure (GDAV_TYPE_GETLASTMODIFIED_PROPERTY);
+	g_type_ensure (GDAV_TYPE_GROUP_MEMBERSHIP_PROPERTY);
+	g_type_ensure (GDAV_TYPE_GROUP_MEMBER_SET_PROPERTY);
 	g_type_ensure (GDAV_TYPE_LOCKDISCOVERY_PROPERTY);
 	g_type_ensure (GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY);
+	g_type_ensure (GDAV_TYPE_OWNER_PROPERTY);
+	g_type_ensure (GDAV_TYPE_PRINCIPAL_URL_PROPERTY);
 	g_type_ensure (GDAV_TYPE_RESOURCETYPE_PROPERTY);
 	g_type_ensure (GDAV_TYPE_SCHEDULE_INBOX_URL_PROPERTY);
 	g_type_ensure (GDAV_TYPE_SCHEDULE_OUTBOX_URL_PROPERTY);
