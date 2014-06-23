@@ -20,7 +20,7 @@
 #ifndef __GDAV_MAX_RESOURCE_SIZE_PROPERTY_H__
 #define __GDAV_MAX_RESOURCE_SIZE_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-uint-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_MAX_RESOURCE_SIZE_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavMaxResourceSizeProperty;
-typedef GDavPropertyClass GDavMaxResourceSizePropertyClass;
+typedef GDavUIntProperty GDavMaxResourceSizeProperty;
+typedef GDavUIntPropertyClass GDavMaxResourceSizePropertyClass;
 
 GType		gdav_max_resource_size_property_get_type
 						(void) G_GNUC_CONST;

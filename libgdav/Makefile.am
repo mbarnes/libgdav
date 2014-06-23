@@ -71,6 +71,7 @@ libgdav_headers = \
 	gdav-supported-calendar-component-set-property.h \
 	gdav-supported-calendar-data-property.h \
 	gdav-supportedlock-property.h \
+	gdav-uint-property.h \
 	gdav-utils.h \
 	gdav-xml-namespaces.h \
 	$(NULL)
@@ -108,6 +109,7 @@ libgdav_la_SOURCES = \
 	gdav-supported-calendar-component-set-property.c \
 	gdav-supported-calendar-data-property.c \
 	gdav-supportedlock-property.c \
+	gdav-uint-property.c \
 	gdav-utils.c \
 	gdav-xml-namespaces.c \
 	$(NULL)

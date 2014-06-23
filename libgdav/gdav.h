@@ -39,6 +39,7 @@
 #include <libgdav/gdav-property-update.h>
 #include <libgdav/gdav-requests.h>
 #include <libgdav/gdav-response.h>
+#include <libgdav/gdav-uint-property.h>
 #include <libgdav/gdav-utils.h>
 
 /* DAV Properties */

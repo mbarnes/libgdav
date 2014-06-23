@@ -20,7 +20,7 @@
 #ifndef __GDAV_GETCONTENTLENGTH_PROPERTY_H__
 #define __GDAV_GETCONTENTLENGTH_PROPERTY_H__
 
-#include <libgdav/gdav-property.h>
+#include <libgdav/gdav-uint-property.h>
 
 /* Standard GObject macros */
 #define GDAV_TYPE_GETCONTENTLENGTH_PROPERTY \
@@ -31,8 +31,8 @@
 
 G_BEGIN_DECLS
 
-typedef GDavProperty GDavGetContentLengthProperty;
-typedef GDavPropertyClass GDavGetContentLengthPropertyClass;
+typedef GDavUIntProperty GDavGetContentLengthProperty;
+typedef GDavUIntPropertyClass GDavGetContentLengthPropertyClass;
 
 GType		gdav_getcontentlength_property_get_type
 						(void) G_GNUC_CONST;

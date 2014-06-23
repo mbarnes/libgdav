@@ -24,22 +24,20 @@
 G_DEFINE_TYPE (
 	GDavGetContentLengthProperty,
 	gdav_getcontentlength_property,
-	GDAV_TYPE_PROPERTY)
+	GDAV_TYPE_UINT_PROPERTY)
 
 static void
-gdav_getcontentlength_property_class_init (GDavPropertyClass *class)
+gdav_getcontentlength_property_class_init (GDavUIntPropertyClass *class)
 {
 	GDavParsableClass *parsable_class;
 
 	parsable_class = GDAV_PARSABLE_CLASS (class);
 	parsable_class->element_name = "getcontentlength";
 	parsable_class->element_namespace = GDAV_XMLNS_DAV;
-
-	class->value_type = G_TYPE_UINT64;
 }
 
 static void
-gdav_getcontentlength_property_init (GDavProperty *property)
+gdav_getcontentlength_property_init (GDavUIntProperty *property)
 {
 }
 
